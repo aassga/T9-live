@@ -1,28 +1,30 @@
 <template>
-  <div class="hello_page">
+  <div class="loading_page">
     <img
-      src="./../../../static/loadig/LoadingIcon.gif"
+      src="./../../../static/loading/LoadingIcon.gif"
       alt=""
       v-show="loading"
     />
-    <div class="hello_page--bg" v-show="!loading">
-      <img src="./../../../static/loadig/bg.jpg" alt="" />
+    <div class="loading_page--bg" v-show="!loading">
+      <img src="./../../../static/loading/bg.jpg" alt="" />
+      <div class="loading_bar">
+        <div class="loading_bar--ball"></div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'helloPage"',
+  name: 'Loading',
   data() {
     return {
       loading: true,
-      SerialNumber: "",
     };
   },
   mounted() {
     this.lodingShow();
-    this.GetSerialNumber()
+    this.getSerialNumber()
   },
   methods: {
     lodingShow() {
@@ -36,8 +38,9 @@ export default {
         }, 1000);
       }, 1000);
     },
-    GetSerialNumber() {
-      if (!this.SerialNumber) {
+    getSerialNumber() {
+      let serialNumber = localStorage.getItem('serialNumber')
+      if (!serialNumber) {
         var chars =
             "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
           serialLength = 10,
@@ -49,28 +52,59 @@ export default {
           randomNumber = Math.floor(Math.random() * chars.length);
           randomSerial += chars.substring(randomNumber, randomNumber + 1);
         }
-        this.SerialNumber = randomSerial;
+        localStorage.setItem('serialNumber',randomSerial)
       }
-      return this.SerialNumber;
+
     },
   },
 };
 </script>
 <style lang="scss" scoped>
-.hello {
+.loading {
   &_page {
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #000;
     &--bg {
       width: 100%;
       height: 100%;
+      text-align: center;
       img {
-        width: 100%;
-        margin-top: 5rem;
+        width: 98%;
+        margin-top: 1rem;
       }
     }
   }
+  &_bar{
+    display: inline-block;
+    position: relative;
+    width: 350px;
+    height: 50px;
+    background: url('./../../../static/loading/Loading_atlas0.png') no-repeat;
+    background-size: 30rem;
+    top: -12rem;
+    &--ball{
+      width: 16px;
+      height: 14px;
+      display: inline-block;
+      position: absolute;
+      background: url('./../../../static/loading/Loading_atlas0.png') no-repeat;
+      background-size: 30rem;
+      background-position: -376px -39px;
+      top: -2px;
+      left: 51px;
+      transform: rotate(89deg);
+      animation-name: animation; /*動畫名稱(自訂)*/
+      animation-duration: 2s; /*一次完整動畫時間為4秒*/
+      animation-iteration-count: infinite; /*播放次數為無限次*/
+
+    }
+  }
+}
+@keyframes animation {
+  0%   {left: 50px;}
+  100% {left: 300px;}
 }
 </style>

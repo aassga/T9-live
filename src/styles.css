@@ -7,7 +7,7 @@ html {
 }
 
 body {
-  background-color: #000000;
+  background-color: #252525;
   color: #e7e7e7;
   font: 300 1rem/1.5 Helvetica Neue, sans-serif;
   margin: 0;
@@ -113,7 +113,7 @@ input::placeholder {
 
 .grid {
   margin: 0 auto;
-  max-width: 23.5rem;
+  max-width: 25rem;
   width: 100%;
 }
 
@@ -167,7 +167,9 @@ a {
 }
 
 .register {
-  background-color: #252525;
+  box-shadow: 0 0 250px #000;
+  -webkit-box-shadow: 0 0 250px #000;
+  -moz-box-shadow: 0 0 250px #000;
   text-align: center;
   padding: 4rem 2rem;
   height: 650px;

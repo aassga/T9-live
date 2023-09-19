@@ -7,17 +7,32 @@
 <script>
 export default {
   name: "App",
-  mounted() {
-    document.body.addEventListener(
-      "touchmove",
-      (e) => {
-        if (e.target.parentElement._isScroller) return;
-        e.preventDefault();
-      },
-      {
-        passive: false,
+  data() {
+    return {
+      device:"",
+    }
+  },
+  created() {
+    this.getUserAgent();
+  },
+  methods: {
+    getUserAgent() {
+      if (
+        navigator.userAgent.match(/Android/i) ||
+        navigator.userAgent.match(/webOS/i) ||
+        navigator.userAgent.match(/iPhone/i) ||
+        navigator.userAgent.match(/iPad/i) ||
+        navigator.userAgent.match(/iPod/i) ||
+        navigator.userAgent.match(/BlackBerry/i) ||
+        navigator.userAgent.match(/Windows Phone/i) ||
+        navigator.userAgent.match(/Macintosh/i)
+      ) {
+        this.device = "mobile";
+      } else {
+        this.device = "pc";
       }
-    );
+      localStorage.setItem("device", this.device);
+    },
   },
 };
 </script>
@@ -25,26 +40,9 @@ export default {
 
 <style lang="scss">
 #app {
-  max-width: 100vw;
-  height: 100vh;
+  max-width: 100%;
+  height: 100%;
   font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
-    "Microsoft YaHei", "微软雅黑","Regular", Arial, sans-serif;
-}
-.el-notification__content {
-  margin-top: 20px;
-  p {
-    display: flex;
-  }
-  .notify-image {
-    margin-right: 10px;
-    width: 50px;
-    height: 50px;
-  }
-  .notify-content {
-    .notify-title {
-      display: block;
-      margin-bottom: 2px;
-    }
-  }
+    "Microsoft YaHei", "微软雅黑", "Regular", Arial, sans-serif;
 }
 </style>

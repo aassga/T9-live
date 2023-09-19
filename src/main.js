@@ -8,12 +8,13 @@ import md5 from 'js-md5';
 import 'element-ui/lib/theme-chalk/index.css'
 
 // 样式重置
-import "reset-css";
+// import "reset-css";
 
 //导入全局样式
-import './styles.scss'
 import './styles.css'
 
+//i18n
+import i18n from './common/plugins/vue-i18n'
 
 // 引入根组件mixins 日期格式
 import mixins from './mixins/root.js'
@@ -26,6 +27,7 @@ Vue.config.productionTip = false
 
 new Vue({
   mixins: [mixins],
+  i18n,
   router,
   store,
   render: h => h(App)
