@@ -5,6 +5,7 @@
 </template>
 
 <script>
+
 export default {
   name: "App",
   data() {
@@ -13,9 +14,17 @@ export default {
     }
   },
   created() {
+    this.init()
     this.getUserAgent();
+    this.getSerialNumber()
   },
   methods: {
+    init() {
+      const token = localStorage.getItem('token')
+      if(!token){
+        this.$router.push({ path: "/Loading" });
+      }
+    },
     getUserAgent() {
       if (
         navigator.userAgent.match(/Android/i) ||
@@ -32,6 +41,24 @@ export default {
         this.device = "pc";
       }
       localStorage.setItem("device", this.device);
+    },
+    getSerialNumber() {
+      let serialNumber = localStorage.getItem('serialNumber')
+      if (!serialNumber) {
+        var chars =
+            "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+          serialLength = 10,
+          randomSerial = "",
+          i,
+          randomNumber;
+
+        for (i = 0; i < serialLength; i = i + 1) {
+          randomNumber = Math.floor(Math.random() * chars.length);
+          randomSerial += chars.substring(randomNumber, randomNumber + 1);
+        }
+        localStorage.setItem('serialNumber',randomSerial)
+      }
+
     },
   },
 };

@@ -12,12 +12,14 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 //导入全局样式
 import './styles.css'
+import './jquery.dialogbox.css'
 
 //i18n
 import i18n from './common/plugins/vue-i18n'
 
 // 引入根组件mixins 日期格式
 import mixins from './mixins/root.js'
+
 Vue.use(ElementUI);
 
 Vue.prototype.$md5 = md5;

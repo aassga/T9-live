@@ -1,0 +1,40 @@
+{
+	"groups": [
+		{
+			"keys": "ClickBtn_mp3,BGM_mp3,Chips_mp3,ClearBet_mp3,ClickChips_mp3,ConfirmBet_mp3",
+			"name": "Audio"
+		}
+	],
+	"resources": [
+		{
+			"url": "Lobby_Mobile/Audio/ClickBtn.mp3",
+			"type": "sound",
+			"name": "ClickBtn_mp3"
+		},
+		{
+			"url": "Lobby_Mobile/Audio/BGM.mp3",
+			"type": "sound",
+			"name": "BGM_mp3"
+		},
+		{
+			"url": "Lobby_Mobile/Audio/Chips.mp3",
+			"type": "sound",
+			"name": "Chips_mp3"
+		},
+		{
+			"url": "Lobby_Mobile/Audio/ClearBet.mp3",
+			"type": "sound",
+			"name": "ClearBet_mp3"
+		},
+		{
+			"url": "Lobby_Mobile/Audio/ClickChips.mp3",
+			"type": "sound",
+			"name": "ClickChips_mp3"
+		},
+		{
+			"url": "Lobby_Mobile/Audio/ConfirmBet.mp3",
+			"type": "sound",
+			"name": "ConfirmBet_mp3"
+		}
+	]
+}

@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import { login } from "@/api/index";
 export default {
   name: 'Loading',
   data() {
@@ -23,38 +24,38 @@ export default {
     };
   },
   mounted() {
-    this.lodingShow();
-    this.getSerialNumber()
+    this.initLodingShow();
   },
   methods: {
-    lodingShow() {
+    initLodingShow() {
+      const token = localStorage.getItem("token");
       setTimeout(() => {
         this.loading = false;
         setTimeout(() => {
-          if (localStorage.getItem("token")) {
+          if (token) {
+            this.getLogin()
           } else {
             this.$router.push({ path: "/login" });
           }
         }, 1000);
       }, 1000);
     },
-    getSerialNumber() {
-      let serialNumber = localStorage.getItem('serialNumber')
-      if (!serialNumber) {
-        var chars =
-            "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-          serialLength = 10,
-          randomSerial = "",
-          i,
-          randomNumber;
-
-        for (i = 0; i < serialLength; i = i + 1) {
-          randomNumber = Math.floor(Math.random() * chars.length);
-          randomSerial += chars.substring(randomNumber, randomNumber + 1);
+    getLogin() {
+      const device = localStorage.getItem("device");
+      const token = localStorage.getItem("token");
+      let parmas = {
+        Device: device === "mobile" ? '1' : '0',
+        Token:token,
+      };
+      login(parmas).then((res) => {
+        if(res.Error === 0){
+          const token = res.Data.Token
+          localStorage.setItem('token',token)
+          this.$router.push({ path: "/MemberRule" });
+        }else{
+          this.$router.push({ path: "/login" });
         }
-        localStorage.setItem('serialNumber',randomSerial)
-      }
-
+      });
     },
   },
 };
@@ -81,21 +82,19 @@ export default {
     display: inline-block;
     position: relative;
     width: 350px;
-    height: 50px;
-    background: url('./../../../static/loading/Loading_atlas0.png') no-repeat;
-    background-size: 30rem;
+    height: 20px;
+    background: url('./../../../static/loading/LoadingLine.png') no-repeat;
+    background-size: contain;
     top: -12rem;
     &--ball{
-      width: 16px;
-      height: 14px;
+      width: 20px;
+      height: 20px;
       display: inline-block;
       position: absolute;
-      background: url('./../../../static/loading/Loading_atlas0.png') no-repeat;
-      background-size: 30rem;
-      background-position: -376px -39px;
-      top: -2px;
+      background: url('./../../../static/loading/LoadingPoint.png') no-repeat;
+      background-size: cover;
+      top: -5px;
       left: 51px;
-      transform: rotate(89deg);
       animation-name: animation; /*動畫名稱(自訂)*/
       animation-duration: 2s; /*一次完整動畫時間為4秒*/
       animation-iteration-count: infinite; /*播放次數為無限次*/

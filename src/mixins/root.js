@@ -32,7 +32,7 @@ const rootMixins = {
     },
     // 转换时间为YYYY-MM-DD格式
     formatTime(time) {
-      return this.$moment(time).format('YYYY-MM-DD')
+      return this.$moment(time).format('YYYY/M/DD')
     },
     formatTime2(time) {
       return this.$moment(time).format('YYYYMMDD')

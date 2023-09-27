@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Router from 'vue-router'
-import Lobby from '../views/Lobby/Lobby.vue'
+import lobbyRouter from './modules/lobby'
 
 const originalPush = Router.prototype.push
 Router.prototype.push = function push(location) {
@@ -15,6 +15,10 @@ const routes = [
     path: '/',
     redirect: "/Loading"
   },
+  // {
+  //   path: '/',
+  //   redirect: "/Lobby"
+  // },
   {
     path: "/Loading",
     name: "Loading",
@@ -23,16 +27,14 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Login/Login.vue')
+    component: () => import(/* webpackChunkName: "Login" */ '../views/Login/Login.vue')
   },
   {
-    path: '/about',
-    name: 'about',
-    component: Lobby
+    path: '/MemberRule',
+    name: 'MemberRule',
+    component: () => import(/* webpackChunkName: "MemberRule" */ '../views/MemberRule/MemberRule.vue')
   },
+  ...lobbyRouter,
 ]
 
 const router = new VueRouter({

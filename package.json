@@ -5,8 +5,12 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "serve:prod": "vue-cli-service serve --mode prod",
+    "serve:dev": "vue-cli-service serve --mode dev",
+    "serve:stage": "vue-cli-service serve --mode stage",
     "build": "vue-cli-service build",
-    "build:prod": "vue-cli-service build --mode prod"
+    "build:prod": "vue-cli-service build --mode prod",
+    "build:dev": "vue-cli-service build --mode dev",
+    "build:stage": "vue-cli-service build --mode stages"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -15,13 +19,14 @@
     "moment": "^2.29.1",
     "querystring": "^0.2.0",
     "reset-css": "^5.0.1",
-    "socket.io-client": "^4.2.0",
+    "swiper": "^5.4.5",
     "view-design": "^4.4.0",
     "vue": "^2.6.11",
+    "vue-awesome-swiper": "^4.1.1",
     "vue-i18n": "^8.27.1",
     "vue-router": "^3.2.0",
-    "vue-socket.io": "^3.0.10",
-    "vuex": "^3.4.0"
+    "vuex": "^3.4.0",
+    "vuex-along": "^1.2.13"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

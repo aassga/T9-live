@@ -11,6 +11,7 @@ axios.defaults.withCredentials = true
 class HttpRequest {
   constructor(baseUrl = baseURL) {
     this.baseUrl = baseUrl
+
   }
   getInsideConfig() {
     const config = {
@@ -32,9 +33,9 @@ class HttpRequest {
         config.headers.post['Content-Type'] = "'Content-Type': 'multipart/form-data'";
         
       }
-      if (getToken) {
-        config.headers.Authorization = `${localStorage.token}`
-      }
+      // if (getToken) {
+      //   config.headers.Authorization = `${localStorage.token}`
+      // }
       return config
     }, error => {
       return Promise.reject(error)
