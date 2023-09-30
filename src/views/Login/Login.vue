@@ -74,13 +74,12 @@
               />
             </div>
             <div class="status_field">
-              <span v-show="statusField">{{ tipMsgShow }}</span>
+              <span v-show="statusField">{{ onSubmitMsgShow }}</span>
             </div>
             <div class="form__field" @click="validate()">
               <div class="onSubmit">{{ $t("Login") }}</div>
             </div>
           </form>
-
           <form
             id="ChangePWDForm"
             action=""
@@ -138,7 +137,7 @@
               {{ $t("Illustrate") }}
             </div>
             <div class="form__field ConfirmBtn">
-              <input type="submit" id="OK" value="确认" />
+              <input type="submit" id="OK" :value="$t('OK')" />
             </div>
           </form>
         </div>
@@ -147,8 +146,8 @@
       <section
         id="dialog"
         class="dialog-box effect-fade dialog-style"
-        :class="{ 'show': showErrorMsg }"
-        :style="marginStyle()"
+        :class="{ show: showErrorMsg }"
+        :style="dialogMarginStyle()"
       >
         <div class="dialog-box-container normal">
           <div class="dialog-box-content">{{ $t("Msg_MemberNotFound") }}</div>
@@ -161,11 +160,11 @@
 import { login } from "@/api/index";
 import { mapMutations } from "vuex";
 export default {
-  name: "login",
+  name: "Login",
   data() {
     return {
       langBtn: false,
-      maskShow:false,
+      maskShow: false,
       statusField: false,
       showErrorMsg: false,
       loginForm: {
@@ -201,12 +200,13 @@ export default {
           imgKey: "th",
         },
       ],
-      tipMsgShow: "",
+      onSubmitMsgShow: "",
+
     };
   },
   mounted() {
-    this.getLangImg();
     this.initLang();
+    this.getLangImg();
     window.addEventListener("visibilitychange", this.handleVisiable);
   },
   destroyed() {
@@ -214,7 +214,8 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setGameList:"ws/setGameList",
+      setGameList: "ws/setGameList",
+      setBannerList: "ws/setBannerList",
     }),
     handleVisiable(e) {
       switch (e.target.visibilityState) {
@@ -223,27 +224,27 @@ export default {
           break;
         case "visible":
           // console.log('处于正常打开')
-          // this.init();
+          // this.goLoadingRouter();
           break;
       }
     },
-    init() {
+    goLoadingRouter() {
       this.$router.push({ path: "/Loading" });
     },
-    initLang(){
-      const lang = localStorage.getItem("language") || 'CN';
+    initLang() {
+      const lang = localStorage.getItem("language") || "CN";
       this.setActiveLanguage(lang);
     },
     getLangImg() {
-      const lang = localStorage.getItem("language") || 'CN';
+      const lang = localStorage.getItem("language") || "CN";
       const langList = {
-        'CN':'cn',
-        'TW':'hk',
-        'EN':'gb',
-        'JP':'jp',
-        'TH':'th',
-      }
-      this.imgSelectKey = langList[lang]
+        CN: "cn",
+        TW: "hk",
+        EN: "gb",
+        JP: "jp",
+        TH: "th",
+      };
+      this.imgSelectKey = langList[lang];
       this.loginForm.language = lang;
     },
     clickLangBtn(data) {
@@ -251,18 +252,18 @@ export default {
       this.setActiveLanguage(data);
       return history.go(0);
     },
-
     setActiveLanguage(lang) {
       localStorage.setItem("language", lang);
     },
     validate() {
       if (!this.loginForm.account) {
-        this.tipMsgShow = this.$t("Msg_EnterAcc");
+        this.onSubmitMsgShow = this.$t("Msg_EnterAcc");
         return;
       } else if (!this.loginForm.password) {
-        this.tipMsgShow = this.$t("Msg_EnterPwd");
+        this.onSubmitMsgShow = this.$t("Msg_EnterPwd");
+        return;
       } else {
-        this.tipMsgShow = this.$t("ConnectServer_0");
+        this.onSubmitMsgShow = this.$t("ConnectServer_0");
         this.getLogin();
       }
     },
@@ -271,48 +272,55 @@ export default {
       const device = localStorage.getItem("device");
       let parmas = {
         Account: this.loginForm.account,
-        Device: device === "mobile" ? '1' : '0',
+        Device: device === "mobile" ? "1" : "0",
         Language: this.loginForm.language,
         Password: this.loginForm.password,
         SerialNumber: localStorage.getItem("serialNumber"),
       };
       login(parmas).then((res) => {
-        if(res.Error === 0){
-          const token = res.Data.Token
-          const gameList = res.Data.GameList
-          const gameRuleRouter = res.Data.MemberRuleUrl
-          const socktUrlList = res.Data.ConnectIds
-          this.setGameList(gameList)
-          localStorage.setItem('token',token)
-          localStorage.setItem('account',this.loginForm.account)
-          localStorage.setItem('password',this.loginForm.password)
-          localStorage.setItem('gameRuleRouter',gameRuleRouter)
-          localStorage.setItem('socketUrlListL',JSON.stringify(socktUrlList))
-          
-          this.$router.push({ path: "/MemberRule" });
-
-        }else if(res.ErrorCode === 'MemberNotFound'){
+        if (res.Error === 0) {
+          this.checkRemember();
+          this.setLocalStorage(res);
+        } else if (res.ErrorCode === "MemberNotFound") {
           this.maskShow = true;
           this.showErrorMsg = true;
           this.statusField = false;
           setTimeout(() => {
             this.maskShow = false;
-            this.showErrorMsg = false;            
+            this.showErrorMsg = false;
           }, 1500);
         }
       });
     },
-    marginStyle(){
-      const lang = localStorage.getItem("language") || 'CN';
-      const num = {
-        'CN':'-63px',
-        'TW':'-63px',
-        'EN':'-104px',
-        'JP':'',
-        'TH':'-113px',
+    checkRemember() {
+      const GamePrecautionsNumber = "GamePrecautions_" + this.loginForm.account;
+      const remember = localStorage.getItem(GamePrecautionsNumber);
+      const goRouter = remember ? "/Lobby" : "/MemberRule"
+      this.$router.push({ path: goRouter });
+    },
+    setLocalStorage(res) {
+      const infoConfig = {
+        "token":res.Data.Token,
+        "account" : this.loginForm.account,
+        "password" : this.loginForm.password,
+        "gameRuleRouter" : res.Data.MemberRuleUrl,
+        "socketUrlListL" : JSON.stringify(res.Data.ConnectIds),
       }
-      return `margin-left:${num[lang]};`
-    }
+      for (let item in infoConfig) {
+        localStorage.setItem(item, infoConfig[item]);
+      }
+    },
+    dialogMarginStyle() {
+      const lang = localStorage.getItem("language") || "CN";
+      const num = {
+        CN: "-63px",
+        TW: "-63px",
+        EN: "-104px",
+        JP: "",
+        TH: "-113px",
+      };
+      return `margin-left:${num[lang]};`;
+    },
   },
 };
 </script>
@@ -336,8 +344,8 @@ export default {
     border-radius: 27px;
     padding: 0.5rem 1rem;
   }
-  .dialog{
-    &-style{
+  .dialog {
+    &-style {
       // width: 125.6px;
       height: 65.6px;
       margin-top: -33px;
@@ -345,8 +353,8 @@ export default {
       display: block;
     }
   }
-  .mask{
-    &__block{
+  .mask {
+    &__block {
       position: absolute;
       width: 100%;
       height: 100%;

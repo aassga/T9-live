@@ -36,7 +36,7 @@
         </div>
       </div>
     </div>
-    <audio ref="audioPlayer" src="./../../../../static/audio/BGM.mp3" type="audio/mp3"></audio>
+    <audio ref="audioPlayer" src="./../../../../static/audio/BGM.mp3" type="audio/mp3" loop="ture"></audio>
     <audio ref="audioClickPlayer" src="./../../../../static/audio/ClickBtn.mp3" type="audio/mp3"></audio>
   </div>
 </template>
@@ -49,7 +49,7 @@ export default {
     return {
       icon: [
         {
-          key: "MainMenu",
+          key: "mainMenu",
           img: require("./../../../../static/lobby/header/MainMenu.png"),
         },
         {
@@ -57,15 +57,15 @@ export default {
           img: require("./../../../../static/lobby/header/Home.png"),
         },
         {
-          key: "VolumeOn",
+          key: "volumeOn",
           img: require("./../../../../static/lobby/header/VolumeOn.png"),
         },
         {
-          key: "VolumeOff",
+          key: "volumeOff",
           img: require("./../../../../static/lobby/header/VolumeOff.png"),
         },
         {
-          key: "SignOut",
+          key: "signOut",
           img: require("./../../../../static/lobby/header/SignOut.png"),
         },
       ],
@@ -99,17 +99,30 @@ export default {
       this.memberInfo.endMoney = this.formatPrice(this.playerInfo.MaxBetLimit)
     },
     volumeStyle(data) {
-      if (["VolumeOn", "VolumeOff"].includes(data)) {
-        return data === "VolumeOff" ? this.volume : !this.volume;
+      if (["volumeOn", "volumeOff"].includes(data)) {
+        return data === "volumeOff" ? this.volume : !this.volume;
       }
     },
     checkIcon(icon) {
-      if(icon.key === 'VolumeOff'){
-        this.volume = true
-        this.$refs.audioPlayer.play();
-      }else if(icon.key === 'VolumeOn'){
-        this.volume = false
-        this.$refs.audioPlayer.pause();
+      const key = icon.key
+      switch (key) {
+        case "mainMenu":
+          
+          break;
+        case "home":
+          this.$router.push({ path: "/Lobby" });
+          break;
+        case "volumeOn":
+          this.volume = false
+          this.$refs.audioPlayer.pause();
+          break;
+        case "volumeOff":
+          this.volume = true
+          this.$refs.audioPlayer.play();
+          break;  
+        case "signOut":
+          this.$emit('logout')
+          break;    
       }
       this.volumeStyle(icon.key)
       this.$refs.audioClickPlayer.play();
@@ -159,12 +172,12 @@ export default {
         align-items: center;
         
       }
-      .MainMenu{
+      .mainMenu{
         img {
           height: 20px;
         }
       }
-      .home,.VolumeOn,.VolumeOff,.SignOut{
+      .home,.volumeOn,.volumeOff,.signOut{
         img {
           height: 25px;
         }

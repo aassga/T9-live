@@ -1,10 +1,7 @@
 <template>
   <div id="iframeParent">
     <div class="mask__border">
-      <div
-        id="GamePrecautionsDiv"
-        style="width: 100%; height: 60vh; z-index: 3; visibility: visible"
-      >
+      <div id="GamePrecautionsDiv">
         <iframe
           frameborder="0"
           noresize="noresize"
@@ -26,6 +23,7 @@
   </div>
 </template>
 <script>
+import screenfull from 'screenfull'
 export default {
   name: "MemberRule",
   data() {
@@ -38,6 +36,15 @@ export default {
     this.initOpenGamePrecation();
   },
   methods: {
+    openFullScreen() {
+       // 如果不允许进入全屏，发出不允许提示
+       if (!screenfull.isEnabled) {
+        this.$message("您的浏览器不能全屏");
+        return false;
+      }
+      screenfull.toggle();
+      // this.$message.success("全屏啦");
+    },
     initOpenGamePrecation() {
       const gameRuleRouter = localStorage.getItem("gameRuleRouter");
       const language = localStorage.getItem("language");
@@ -52,15 +59,14 @@ export default {
       this.gameRuleUrl = `${process.env.VUE_APP_URL}${gameRuleRouter}?language=${nowLanguage}`;
     },
     onSubmit() {
-      let today = this.$root.formatTime(new Date());
+      const today = this.$root.formatTime(new Date());
       const account = localStorage.getItem("account");
       if (this.remember) {
         const GamePrecautionsNumber = "GamePrecautions_" + account;
         localStorage.setItem(`${GamePrecautionsNumber}`, today);
       }
+      // this.openFullScreen()
       this.$router.push({ path: "/Lobby" });
-
-
     },
   },
 };
@@ -76,13 +82,16 @@ export default {
   flex-direction: column;
   padding: 30px;
 }
+#GamePrecautionsDiv {
+  width: 100%;
+  height: 60vh;
+  z-index: 3;
+  visibility: visible;
+}
 .mask {
   &__border {
     width: 100%;
     height: 60vh;
-    // border: 0.5px solid #979797;
-    // border-radius: 10px;
-    // background-color: #252525;
     background: url("./../../../static/btn/CN/Frame_BG.png") no-repeat;
     background-size: 100% 100%;
   }
@@ -92,8 +101,7 @@ export default {
   position: relative;
   width: 75%;
   height: 75px;
-  background: url("./../../../static/btn/CN/Button_BG.png")
-    no-repeat;
+  background: url("./../../../static/btn/CN/Button_BG.png") no-repeat;
   background-size: 100%;
   background-position: center;
   &__text {

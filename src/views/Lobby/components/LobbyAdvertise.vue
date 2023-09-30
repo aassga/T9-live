@@ -10,19 +10,9 @@
         @slideChange="onSlideChange"
         ref="mySwiper"
       >
-        <swiper-slide
+        <swiper-slide v-for="(item,index) in bannerList" :key="index"
           ><img
-            src="https://t9cali.leopardcat.live/banner/stage/1_5.jpg"
-            alt=""
-        /></swiper-slide>
-        <swiper-slide
-          ><img
-            src="https://t9cali.leopardcat.live/banner/stage/1_5.jpg"
-            alt=""
-        /></swiper-slide>
-        <swiper-slide
-          ><img
-            src="https://t9cali.leopardcat.live/banner/stage/1_5.jpg"
+            :src="item.ImgPath"
             alt=""
         /></swiper-slide>
       </swiper>
@@ -31,6 +21,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 import { Swiper, SwiperSlide } from "vue-awesome-swiper";
 import "swiper/css/swiper.css";
 export default {
@@ -56,7 +48,11 @@ export default {
       },
     };
   },
-
+  computed: {
+    ...mapState({
+      bannerList: state => state.ws.bannerList,
+    }),
+  },
   methods: {
     onSlideChange() {
   

@@ -7,7 +7,9 @@
         class="category__bg"
         :class="item.key"
       >
-        <span>{{ item.name }}</span>
+        <div class="category__bg--box">
+          <span>{{ item.name }}</span> 
+        </div>
       </div>
     </div>
     <div class="category__box">
@@ -17,7 +19,9 @@
         class="category__bg"
         :class="item.key"
       >
-        <span>{{ item.name }}</span>
+        <div class="category__bg--box">
+          <span>{{ item.name }}</span> 
+        </div>
       </div>
     </div>
   </div>
@@ -72,37 +76,30 @@ export default {
       position: relative;
       top: 55px;
     }
+    &--box{
+      width: 54%;
+      height: 100%;
+      text-align: center;
+    }
   }
   .ClassicBaccarat {
     background: url("./../../../../static/lobby/category/ClassicBaccarat.png")
       no-repeat;
     background-size: 100%;
-    span {
-      left: 20px;
-    }
   }
   .MultiTable {
     background: url("./../../../../static/lobby/category/MultiTableBetting.png")
       no-repeat;
     background-size: 100%;
-    span {
-      left: 25px;
-    }
   }
   .Blackjack {
     background: url("./../../../../static/lobby/category/Blackjack.png")
       no-repeat;
     background-size: 100%;
-    span {
-      left: 35px;
-    }
   }
   .NiuNiu {
     background: url("./../../../../static/lobby/category/NiuNiu.png") no-repeat;
     background-size: 100%;
-    span {
-      left: 35px;
-    }
   }
 }
 </style>

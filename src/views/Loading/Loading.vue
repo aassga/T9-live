@@ -1,14 +1,14 @@
 <template>
-  <div class="loading_page">
+  <div class="loading__page">
     <img
-      src="./../../../static/loading/LoadingIcon.gif"
-      alt=""
       v-show="loading"
+      :src="loadingSpin"
+      alt=""
     />
-    <div class="loading_page--bg" v-show="!loading">
-      <img src="./../../../static/loading/bg.jpg" alt="" />
-      <div class="loading_bar">
-        <div class="loading_bar--ball"></div>
+    <div class="loading__page--bg" v-show="!loading">
+      <img :src="loadingGirl" alt="" />
+      <div class="loading__bar">
+        <div class="loading__bar--ball"></div>
       </div>
     </div>
   </div>
@@ -21,12 +21,17 @@ export default {
   data() {
     return {
       loading: true,
+      loadingSpin: require("./../../../static/loading/LoadingIcon.gif"),
+      loadingGirl: require("./../../../static/loading/bg.jpg")
     };
   },
   mounted() {
     this.initLodingShow();
   },
   methods: {
+    goLoginRouter(){
+      this.$router.push({ path: "/login" });
+    },
     initLodingShow() {
       const token = localStorage.getItem("token");
       setTimeout(() => {
@@ -35,7 +40,7 @@ export default {
           if (token) {
             this.getLogin()
           } else {
-            this.$router.push({ path: "/login" });
+            this.goLoginRouter()
           }
         }, 1000);
       }, 1000);
@@ -53,7 +58,7 @@ export default {
           localStorage.setItem('token',token)
           this.$router.push({ path: "/MemberRule" });
         }else{
-          this.$router.push({ path: "/login" });
+          this.goLoginRouter()
         }
       });
     },
@@ -62,7 +67,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .loading {
-  &_page {
+  &__page {
     height: 100%;
     display: flex;
     justify-content: center;
@@ -78,7 +83,7 @@ export default {
       }
     }
   }
-  &_bar{
+  &__bar{
     display: inline-block;
     position: relative;
     width: 350px;

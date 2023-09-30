@@ -2,6 +2,7 @@ const path = require('path')
 function resolve(dir) {
   return path.join(__dirname, dir)
 }
+const IN_ONLINE = process.env.NODE_ENV === "online";
 module.exports = {
   publicPath: '',
   devServer: {
@@ -25,4 +26,26 @@ module.exports = {
       }
     }
   },
+  chainWebpack: config => {
+    config
+      .plugin('html')
+      .tap(args => {
+        args[0].title = "T9 LIVE";
+        return args
+      })
+    //線上環境打包圖片壓縮 
+    IN_ONLINE &&
+    config.module
+      .rule("images")
+      .use("image-webpack-loader")
+      .loader("image-webpack-loader")
+      .options({
+        mozjpeg: { progressive: true, quality: 65 },
+        optipng: { enabled: false },
+        pngquant: { quality: [0.65, 0.9], speed: 4 },
+        gifsicle: { interlaced: false },
+      })
+      .end();
+  },
+  transpileDependencies:['screenfull']
 };

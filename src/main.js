@@ -20,6 +20,9 @@ import i18n from './common/plugins/vue-i18n'
 // 引入根组件mixins 日期格式
 import mixins from './mixins/root.js'
 
+import checkTime from './utils/checkTime.js'
+Vue.use(checkTime);
+
 Vue.use(ElementUI);
 
 Vue.prototype.$md5 = md5;

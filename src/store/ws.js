@@ -26,6 +26,8 @@ export const state = {
     liveTableList: []
   },
   gameList:[],
+  tableList:[],
+  bannerList:[],
 };
 export const actions = {};
 
@@ -36,6 +38,12 @@ export const mutations = {
   setGameList(state, gameList) {
     state.gameList = gameList;
   },
+  setTableList(state, tableList) {
+    state.tableList = tableList;
+  },
+  setBannerList(state, bannerList) {
+    state.bannerList = bannerList;
+  },  
 };
 export const getters = {};
 
