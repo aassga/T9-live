@@ -10,7 +10,7 @@
       <div class="message__box">
         <div class="message__box--content">
           <div class="money">
-            <img src="./../../../../static/lobby/header/Money.png" alt="" />
+            <img :src="momeySrc" alt="" />
           </div>
           <span class="yellow">${{memberInfo.momey}}</span>
         </div>
@@ -36,8 +36,8 @@
         </div>
       </div>
     </div>
-    <audio ref="audioPlayer" src="./../../../../static/audio/BGM.mp3" type="audio/mp3" loop="ture"></audio>
-    <audio ref="audioClickPlayer" src="./../../../../static/audio/ClickBtn.mp3" type="audio/mp3"></audio>
+    <audio ref="audioPlayer" :src="audioPlayer" type="audio/mp3" loop="ture"></audio>
+    <audio ref="audioClickPlayer" :src="audioClickPlayer" type="audio/mp3"></audio>
   </div>
 </template>
 
@@ -47,26 +47,29 @@ export default {
   name: "LobbyHeader",
   data() {
     return {
+      momeySrc:require("./../../../assets/static/lobby/header/Money.png"),
+      audioPlayer:require("./../../../assets/static/audio/BGM.mp3"),
+      audioClickPlayer:require("./../../../assets/static/audio/ClickBtn.mp3"),
       icon: [
         {
           key: "mainMenu",
-          img: require("./../../../../static/lobby/header/MainMenu.png"),
+          img: require("./../../../assets/static/lobby/header/MainMenu.png"),
         },
         {
           key: "home",
-          img: require("./../../../../static/lobby/header/Home.png"),
+          img: require("./../../../assets/static/lobby/header/Home.png"),
         },
         {
           key: "volumeOn",
-          img: require("./../../../../static/lobby/header/VolumeOn.png"),
+          img: require("./../../../assets/static/lobby/header/VolumeOn.png"),
         },
         {
           key: "volumeOff",
-          img: require("./../../../../static/lobby/header/VolumeOff.png"),
+          img: require("./../../../assets/static/lobby/header/VolumeOff.png"),
         },
         {
           key: "signOut",
-          img: require("./../../../../static/lobby/header/SignOut.png"),
+          img: require("./../../../assets/static/lobby/header/SignOut.png"),
         },
       ],
       memberInfo:{
@@ -93,10 +96,11 @@ export default {
   },
   methods: {
     initInfo(){
-      this.memberInfo.name = this.playerInfo.NickName
-      this.memberInfo.momey = this.formatPrice(this.playerInfo.Balance)
-      this.memberInfo.startMoney = this.formatPrice(this.playerInfo.MiniBetLimit)
-      this.memberInfo.endMoney = this.formatPrice(this.playerInfo.MaxBetLimit)
+      const playerInfo = this.playerInfo
+      this.memberInfo.name = playerInfo.NickName
+      this.memberInfo.momey = this.formatPrice(playerInfo.Balance)
+      this.memberInfo.startMoney = this.formatPrice(playerInfo.MiniBetLimit)
+      this.memberInfo.endMoney = this.formatPrice(playerInfo.MaxBetLimit)
     },
     volumeStyle(data) {
       if (["volumeOn", "volumeOff"].includes(data)) {
@@ -129,7 +133,6 @@ export default {
     },
     loading(){
       this.$refs.audioClickPlayer.play();
-
     },
     formatPrice(price){
       return String(price).replace(/\B(?=(\d{3})+(?!\d))/g,',')
@@ -150,7 +153,7 @@ export default {
 .lobby {
   &__header {
     width: 95%;
-    padding: 10px 5px 0 5px;
+    padding: 15px 0 0 0;
     display: flex;
     justify-content: space-around;
     &--left,&--right {
@@ -186,7 +189,7 @@ export default {
     &__box {
       width: 100%;
       height: 25px;
-      background: url("./../../../../static/lobby/header/FrameBG.png") no-repeat;
+      background: url("./../../../assets/static/lobby/header/FrameBG.png") no-repeat;
       background-size: contain;
       margin-bottom: 5px;
       display: flex;
@@ -206,7 +209,7 @@ export default {
         .money {
           width: 15px;
           height: 15px;
-          background: url("./../../../../static/lobby/header/MoneyBG.png") no-repeat;
+          background: url("./../../../assets/static/lobby/header/MoneyBG.png") no-repeat;
           background-size: cover;
           display: flex;
           justify-content: center;
@@ -220,20 +223,20 @@ export default {
       &--redlimit {
         width: 13px;
         height: 10px;
-        background: url("./../../../../static/lobby/header/RedLimit.png") no-repeat;
+        background: url("./../../../assets/static/lobby/header/RedLimit.png") no-repeat;
         background-size: cover;
         margin-right: 5px;
       }
       &--edit {
         width: 15px;
         height: 15px;
-        background: url("./../../../../static/lobby/header/Pen.png") no-repeat;
+        background: url("./../../../assets/static/lobby/header/Pen.png") no-repeat;
         background-size: cover;
       }
       &--loading {
         width: 15px;
         height: 15px;
-        background: url("./../../../../static/lobby/header/Reset.png") no-repeat;
+        background: url("./../../../assets/static/lobby/header/Reset.png") no-repeat;
         background-size: cover;
       }
     }

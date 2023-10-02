@@ -1,23 +1,28 @@
 <template>
   <div class="lobby">
     <div class="lobby__box">
-      <lobby-header @logout="logout" />
-      <lobby-advertise />
+      <LobbyHeader @logout="logoutMaskShow" />
+      <LobbyAdvertise />
       <div class="lobby__room">
         <router-view></router-view>
       </div>
     </div>
     <div class="lobby__mask" v-show="lobbyMaskShow">
       <img
-        v-if="lobbyLoding"
-        src="./../../../static/lobby/Circle01.png"
+        v-if="lobbyLoading"
+        class="lobby__mask--loadingImg"
+        :src="loadingSrc"
         alt=""
       />
-      <msg-box
-        v-if="!lobbyLoding"
-        :msgText="$t('Msg_Logout')"
+      <div v-if="systemShow" class="system__bg">
+        <img :src="funnelSrc" alt="">
+        <div class="screenMobile__text">{{ $t('SystemMaintenance') }}</div>
+      </div>
+      <MessageBox
+        v-show="messageBoxShow"
+        :msgText="messageText"
         :okButtom="true"
-        :noButtom="true"
+        :noButtom="logoutShow"
         @onSubmit="onSubmit"
         @cancel="cancel"
       />
@@ -28,28 +33,31 @@
 <script>
 import LobbyHeader from "./components/LobbyHeader.vue";
 import LobbyAdvertise from "./components/LobbyAdvertise.vue";
-import LobbyRoad from "./components/LobbyRoad.vue";
-import LobbyCategory from "./components/LobbyCategory.vue";
-import MsgBox from "@/components/MsgBox.vue";
+import MessageBox from "@/components/MsgBox.vue";
 
 import Socket from "@/utils/socket";
 
+import { logout } from "@/utils/system";
 import { getSocketList } from "@/utils/socketUrl";
 import { mapState, mapMutations } from "vuex";
 export default {
   name: "Lobby",
   data() {
     return {
+      messageText:"",
       lobbyMaskShow: true,
-      lobbyLoding: true,
+      lobbyLoading: true,
+      messageBoxShow:false,
+      systemShow:false,
+      logoutShow:false,
+      loadingSrc:require("./../../assets/static/lobby/Circle01.png"),
+      funnelSrc:require("./../../assets/static/system/Funnel.png"),
     };
   },
   components: {
     LobbyHeader,
     LobbyAdvertise,
-    LobbyRoad,
-    LobbyCategory,
-    MsgBox,
+    MessageBox,
   },
   created() {
     Socket.$on("message", this.handleGetMessage);
@@ -63,14 +71,18 @@ export default {
   computed: {
     ...mapState({
       gameList: (state) => state.ws.gameList,
-      playerInfo: (state) => state.ws.gameList,
+      playerInfo: (state) => state.ws.playerInfo,
+      tableList: (state) => state.ws.tableList,
     }),
   },
   methods: {
     ...mapMutations({
-      setPlayerInfo: "ws/setPlayerInfo",
-      setTableList: "ws/setTableList",
+      SET_PLAYER_INFO: "ws/SET_PLAYER_INFO",
+      SET_TABLE_LIST:"ws/SET_TABLE_LIST",
     }),
+    handleClick(e){
+      console.log(e)
+    },
     initSocket() {
       const socketUrlList = JSON.parse(localStorage.getItem("socketUrlListL"));
       if (socketUrlList.length === 0) {
@@ -87,45 +99,88 @@ export default {
       const msgType = JSON.parse(msg).OpCode;
       switch (msgType) {
         case "LoginGame":
-          let enterTable = {
-            OpCode: "EnterTable",
-            Data: {
-              EnterTableInLobby: "true",
-              GameType: this.gameList[0].GameType,
-              TableId: this.gameList[0].TableList[0].TableId,
-            },
-            Token: localStorage.getItem("token"),
-          };
-          Socket.sendWebSocket(enterTable);
-          this.setPlayerInfo(JSON.parse(msg).PlayerInfo);
+          this.lobbyLoading = false;
           this.lobbyMaskShow = false;
-          this.lobbyLoding = false;
+          this.decideGameStatus()
+          this.SET_PLAYER_INFO(JSON.parse(msg).PlayerInfo);
           break;
         case "EnterTable":
+          const playerInfo = this.playerInfo
           let balanceInfo = {
             OpCode: "BalanceInfo",
             Data: {
-              AgentId: this.playerInfo.AgentId,
-              MemberName: this.playerInfo.MemberName,
+              AgentId: String(playerInfo.AgentId),
+              MemberName: playerInfo.MemberName,
             },
             Token: localStorage.getItem("token"),
           };
           Socket.sendWebSocket(balanceInfo);
-          this.setTableList(JSON.parse(msg).TableList);
           break;
+        case "DisConnected":
+          const timeout = 3000
+          this.logoutShow = false;
+          this.systemShow = false;
+          this.lobbyMaskShow = true;
+          this.messageBoxShow = true;
+          this.messageText = this.$t('Msg_357')
+          setTimeout(() => {
+            Socket.closeWebSocket();
+            logout()   
+          }, timeout);
+          break
+        case "CloseTable":
+          const TableId = JSON.parse(msg).TableId
+          const newTable = this.tableList.filter((id) => id.TableId !== TableId)
+          this.SET_TABLE_LIST(newTable)
+        break
       }
     },
-    logout() {
+    decideGameStatus(){
+      const tableLength = this.tableList.length
+      const gameList = this.gameList
+      if(tableLength > 0){
+        let EnterTable = {
+          OpCode: "EnterTable",
+          Data: {
+            EnterTableInLobby: "true",
+            GameType: String(gameList[0].GameType),
+            TableId: gameList[0].TableList[0].TableId,
+          },
+          Token: localStorage.getItem("token"),
+        };
+        Socket.sendWebSocket(EnterTable);
+      }else{
+        this.systemDisconnected()
+      }
+    },
+    systemDisconnected(){
+      const gameList = this.gameList
       this.lobbyMaskShow = true;
+      this.logoutShow = false;
+      this.systemShow = true;
+      this.messageText = this.$t('Msg_Disconnected')
+      let leaveTable = {
+        OpCode:  "LeaveTable",
+        Data: {
+          GameType: String(gameList[0].GameType),
+        },
+        Token: localStorage.getItem("token"),
+      };
+      Socket.sendWebSocket(leaveTable);
+      Socket.closeWebSocket();
+      setTimeout(() => {
+        this.messageBoxShow = true;
+      }, 1500);
+    },
+    logoutMaskShow() {
+      this.systemShow = false;
+      this.logoutShow = true;
+      this.lobbyMaskShow = true;
+      this.messageBoxShow = true;
+      this.messageText = this.$t('Msg_Logout')
     },
     onSubmit() {
-      localStorage.removeItem("token");
-      localStorage.removeItem("account");
-      localStorage.removeItem("password");
-      localStorage.removeItem("socketUrlListL");
-      localStorage.removeItem("vuex-along");
-      Socket.closeWebSocket();
-      window.location.reload(); // 于 Electron 应用时,会被停用
+      logout()
     },
     cancel() {
       this.lobbyMaskShow = false;
@@ -143,7 +198,7 @@ export default {
   &__box {
     width: 100%;
     // height: 100%;
-    background: url("./../../../static/lobby/HallBaseMap.png") no-repeat;
+    background: url("./../../assets/static/lobby/HallBaseMap.png") no-repeat;
     background-size: 95% 88%;
     background-position: top;
     display: flex;
@@ -153,7 +208,7 @@ export default {
   &__room {
     width: 95%;
     height: 100%;
-    background: url("./../../../static/lobby/room/BGMask.png") no-repeat;
+    background: url("./../../assets/static/lobby/room/BGMask.png") no-repeat;
     padding: 5px;
     background-position-y: bottom;
   }
@@ -167,9 +222,25 @@ export default {
     top: 0;
     background-color: rgba(0, 0, 0, 0.7);
     z-index: 3;
-    img {
+    &--loadingImg{
       height: 40px;
       animation: rotate-taichi 1s ease-in infinite;
+    }
+    .system{
+      &__bg{
+        width: 100%;
+        height: 100%;
+        background: url("./../../assets/static/system/System_BG.png") no-repeat;
+        background-size: contain;
+        background-position: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        img{
+          height: 40px;
+        }
+      }
     }
   }
 }

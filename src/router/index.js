@@ -8,17 +8,11 @@ Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 Vue.use(VueRouter)
-
-
 const routes = [
   {
     path: '/',
     redirect: "/Loading"
   },
-  // {
-  //   path: '/',
-  //   redirect: "/Lobby"
-  // },
   {
     path: "/Loading",
     name: "Loading",

@@ -20,6 +20,8 @@
       <label for="inputId"></label>
       <span class="checkbox__text">{{ $t("DoNotShowAgain") }}</span>
     </div>
+    <audio ref="audioClickPlayer" :src="audioClickPlayer" type="audio/mp3"></audio>
+
   </div>
 </template>
 <script>
@@ -30,6 +32,7 @@ export default {
     return {
       remember: "",
       gameRuleUrl: "",
+      audioClickPlayer:require("./../../assets/static/audio/ClickBtn.mp3"),
     };
   },
   mounted() {
@@ -46,7 +49,6 @@ export default {
       // this.$message.success("全屏啦");
     },
     initOpenGamePrecation() {
-      const gameRuleRouter = localStorage.getItem("gameRuleRouter");
       const language = localStorage.getItem("language");
       const languageList = {
         CN: "cn",
@@ -56,6 +58,7 @@ export default {
         TH: "th",
       };
       const nowLanguage = languageList[language];
+      const gameRuleRouter = localStorage.getItem("gameRuleRouter");
       this.gameRuleUrl = `${process.env.VUE_APP_URL}${gameRuleRouter}?language=${nowLanguage}`;
     },
     onSubmit() {
@@ -63,10 +66,13 @@ export default {
       const account = localStorage.getItem("account");
       if (this.remember) {
         const GamePrecautionsNumber = "GamePrecautions_" + account;
-        localStorage.setItem(`${GamePrecautionsNumber}`, today);
+        localStorage.setItem(GamePrecautionsNumber, today);
       }
       // this.openFullScreen()
-      this.$router.push({ path: "/Lobby" });
+      this.$refs.audioClickPlayer.play();
+      setTimeout(() => {
+        this.$router.push({ path: "/Lobby" });
+      }, 500);
     },
   },
 };
@@ -92,7 +98,7 @@ export default {
   &__border {
     width: 100%;
     height: 60vh;
-    background: url("./../../../static/btn/CN/Frame_BG.png") no-repeat;
+    background: url("./../../assets/static/btn/CN/Frame_BG.png") no-repeat;
     background-size: 100% 100%;
   }
 }
@@ -101,7 +107,7 @@ export default {
   position: relative;
   width: 75%;
   height: 75px;
-  background: url("./../../../static/btn/CN/Button_BG.png") no-repeat;
+  background: url("./../../assets/static/btn/CN/Button_BG.png") no-repeat;
   background-size: 100%;
   background-position: center;
   &__text {

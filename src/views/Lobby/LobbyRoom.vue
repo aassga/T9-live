@@ -1,8 +1,8 @@
 <template>
   <div>
-    <lobby-road />
+    <LobbyRoad />
     <div class="lobby__category">
-      <lobby-category />
+      <LobbyCategory />
     </div>
   </div>
 </template>

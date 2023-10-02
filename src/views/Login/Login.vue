@@ -41,13 +41,13 @@
             class="site__logo Logo"
             width="80"
             height="76"
-            src="./../../../static/Icon.png"
+            :src="logoSrc"
           />
           <img
             class="site__title Logo"
             width="282"
             height="76"
-            src="./../../../static/TitleText.png"
+            :src="logoText"
           />
           <form id="LoginForm" action="" class="form">
             <div class="form__field">
@@ -167,6 +167,8 @@ export default {
       maskShow: false,
       statusField: false,
       showErrorMsg: false,
+      logoSrc:require("./../../assets/static/Icon.png"),
+      logoText:require("./../../assets/static/TitleText.png"),
       loginForm: {
         account: "",
         password: "",
@@ -201,7 +203,6 @@ export default {
         },
       ],
       onSubmitMsgShow: "",
-
     };
   },
   mounted() {
@@ -214,8 +215,9 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setGameList: "ws/setGameList",
-      setBannerList: "ws/setBannerList",
+      SET_GAME_LIST: "ws/SET_GAME_LIST",
+      SET_BANNER_LIST: "ws/SET_BANNER_LIST",
+      SET_TABLE_LIST: "ws/SET_TABLE_LIST",
     }),
     handleVisiable(e) {
       switch (e.target.visibilityState) {
@@ -264,7 +266,7 @@ export default {
         return;
       } else {
         this.onSubmitMsgShow = this.$t("ConnectServer_0");
-        this.getLogin();
+        this.getLogin(); 
       }
     },
     getLogin() {
@@ -280,6 +282,7 @@ export default {
       login(parmas).then((res) => {
         if (res.Error === 0) {
           this.checkRemember();
+          this.setStore(res)
           this.setLocalStorage(res);
         } else if (res.ErrorCode === "MemberNotFound") {
           this.maskShow = true;
@@ -297,6 +300,11 @@ export default {
       const remember = localStorage.getItem(GamePrecautionsNumber);
       const goRouter = remember ? "/Lobby" : "/MemberRule"
       this.$router.push({ path: goRouter });
+    },
+    setStore(res){
+      this.SET_GAME_LIST(res.Data.GameList)
+      this.SET_BANNER_LIST(res.Data.BannerList)
+      this.SET_TABLE_LIST(res.Data.GameList[0].TableList);
     },
     setLocalStorage(res) {
       const infoConfig = {

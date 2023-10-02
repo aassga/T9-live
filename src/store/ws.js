@@ -32,16 +32,16 @@ export const state = {
 export const actions = {};
 
 export const mutations = {
-  setPlayerInfo(state, playerInfo) {
+  SET_PLAYER_INFO(state, playerInfo) {
     state.playerInfo = playerInfo;
   },
-  setGameList(state, gameList) {
+  SET_GAME_LIST(state, gameList) {
     state.gameList = gameList;
   },
-  setTableList(state, tableList) {
+  SET_TABLE_LIST(state, tableList) {
     state.tableList = tableList;
   },
-  setBannerList(state, bannerList) {
+  SET_BANNER_LIST(state, bannerList) {
     state.bannerList = bannerList;
   },  
 };

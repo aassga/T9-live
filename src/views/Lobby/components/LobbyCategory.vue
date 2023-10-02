@@ -70,7 +70,7 @@ export default {
     width: 49%;
     height: 100px;
     display: inline-block;
-    margin-bottom: 1px;
+    margin-bottom: 3px;
     span {
       font-size: 11px;
       position: relative;
@@ -83,22 +83,22 @@ export default {
     }
   }
   .ClassicBaccarat {
-    background: url("./../../../../static/lobby/category/ClassicBaccarat.png")
+    background: url("./../../../assets/static/lobby/category/ClassicBaccarat.png")
       no-repeat;
     background-size: 100%;
   }
   .MultiTable {
-    background: url("./../../../../static/lobby/category/MultiTableBetting.png")
+    background: url("./../../../assets/static/lobby/category/MultiTableBetting.png")
       no-repeat;
     background-size: 100%;
   }
   .Blackjack {
-    background: url("./../../../../static/lobby/category/Blackjack.png")
+    background: url("./../../../assets/static/lobby/category/Blackjack.png")
       no-repeat;
     background-size: 100%;
   }
   .NiuNiu {
-    background: url("./../../../../static/lobby/category/NiuNiu.png") no-repeat;
+    background: url("./../../../assets/static/lobby/category/NiuNiu.png") no-repeat;
     background-size: 100%;
   }
 }

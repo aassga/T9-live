@@ -48,10 +48,11 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: absolute;
     &--bg{
       width: 70%;
       height: 115px;
-      background: url("./../../static/msg/Frame_BG.png") no-repeat;
+      background: url("./../assets/static//msg/Frame_BG.png") no-repeat;
       background-size: 100% 100%;
     }
     &--content{
@@ -67,7 +68,7 @@ export default {
         width: 80px;
         height: 30px;
         line-height: 30px;
-        background: url("./../../static/msg/Button_Red.png") no-repeat;
+        background: url("./../assets/static//msg/Button_Red.png") no-repeat;
         background-size: contain;
         background-position: center;
         margin: 0 10px;
@@ -78,7 +79,7 @@ export default {
         width: 80px;
         height: 30px;
         line-height: 30px;
-        background: url("./../../static/msg/Button_Black.png") no-repeat;
+        background: url("./../assets/static//msg/Button_Black.png") no-repeat;
         background-size: contain;
         background-position: center;
         margin: 0 10px;

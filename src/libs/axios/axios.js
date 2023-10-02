@@ -1,28 +1,23 @@
 import axios from 'axios'
-import { getToken } from '../utils/utils.js'
-// axios.defaults.headers.post['Content-Type'] = "'Content-Type': 'multipart/form-data'";
 axios.defaults.headers.post['Content-Type'] = "'Content-Type': 'multipart/form-data'";
-// axios.defaults.headers.post['Content-Type'] = 'application/json'
 axios.defaults.timeout = 100000
-
 // 前端axios添加withCredentials属性
 axios.defaults.withCredentials = true
-
 class HttpRequest {
-  constructor(baseUrl = baseURL) {
-    this.baseUrl = baseUrl
-
-  }
-  getInsideConfig() {
-    const config = {
-      baseURL: this.baseUrl
-    }
-    return config
-  }
+  // constructor(baseUrl = baseURL) {
+  //   this.baseUrl = baseUrl
+  //   console.log(baseUrl)
+  // }
+  // getInsideConfig() {
+  //   const config = {
+  //     baseURL: this.baseUrl
+  //   }
+  //   return config
+  // }
   interceptors(instance, url) {
     // 请求拦截
     instance.interceptors.request.use(config => {
-     
+      const token = localStorage.getItem('token')
       if (config.method === 'get') {
         config.params = {
           ...config.params,
@@ -33,9 +28,9 @@ class HttpRequest {
         config.headers.post['Content-Type'] = "'Content-Type': 'multipart/form-data'";
         
       }
-      // if (getToken) {
-      //   config.headers.Authorization = `${localStorage.token}`
-      // }
+      if (token) {
+        config.headers.Authorization = token
+      }
       return config
     }, error => {
       return Promise.reject(error)
@@ -53,9 +48,9 @@ class HttpRequest {
   }
   request(options, noShowTip) {
     const instance = axios.create()
-    options = Object.assign(this.getInsideConfig(), options)
+    // options = Object.assign(this.getInsideConfig(), options)
+    // instance.noShowTip = noShowTip
     this.interceptors(instance, options.url)
-    instance.noShowTip = noShowTip
     return instance(options)
   }
 }

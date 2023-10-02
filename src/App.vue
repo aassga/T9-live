@@ -2,20 +2,25 @@
   <div id="app" v-if="device === 'mobile'"> 
     <router-view v-if="!screenMask"></router-view>
     <div class="screen__mask" v-if="screenMask">
-      <img src="./../static/MobileRotIcon.png" alt="" />
-      <div class="screen__mask--text" v-html="examine()"></div>
+      <div class="screenMobile" v-if="screenMobile">
+        <img :src="mobileRotIconSrc" alt="" />
+        <div class="screenMobile__text" v-html="examine()"></div>
+      </div>
     </div>
+
   </div>
 </template>
 
 <script>
-
+import { logout } from "@/utils/system";
 export default {
   name: "App",
   data() {
     return {
       device: "",
       screenMask: false,
+      screenMobile:false,
+      mobileRotIconSrc:require("./assets/static/MobileRotIcon.png"),
     };
   },
   created() {
@@ -38,7 +43,10 @@ export default {
     renderResize() {
       const width = document.documentElement.clientWidth;
       const height = document.documentElement.clientHeight;
-      this.screenMask = width > height ;
+      if(width > height){
+        this.screenMask = true;
+        this.screenMobile = true;
+      }
     },
     initRouter() {
       const token = localStorage.getItem("token");
@@ -69,6 +77,9 @@ export default {
         localStorage.setItem("serialNumber", randomSerial);
       }
     },
+    onSubmit(){
+      logout()
+    }
   },
 };
 </script>
@@ -90,14 +101,18 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    img{
-      height: 140px;
+    .screenMobile{
+      img{
+        height: 140px;
+      }
+      &__text{
+        font-size: 20px;
+        text-align: center;
+        margin-top: 20px;
+      }
     }
-    &--text{
-      font-size: 20px;
-      text-align: center;
-      margin-top: 20px;
-    }
+    
+
   }
 }
 </style>

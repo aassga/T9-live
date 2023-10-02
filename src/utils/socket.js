@@ -2,6 +2,8 @@ import Vue from "vue";
 import { getSocketUrl, getSocketList } from "@/utils/socketUrl";
 
 var socket = null;
+var isManualClose = false; // 手动关闭 WS 连线
+
 const emitter = new Vue({
   methods: {
     sendWebSocket(message) {
@@ -10,6 +12,7 @@ const emitter = new Vue({
     closeWebSocket() {
       console.log('[ws]manual close websocket');
       socket.close();
+      isManualClose = true;
     },
     // 初始化 websocket 
     initWebSocket() {
@@ -45,6 +48,7 @@ const emitter = new Vue({
       emitter.$emit("error", err);
     },
     socketOnclose(e) {
+      if (isManualClose) return
       console.log("<--【连线斷開】------自動重新連線-->",e);
       const socketUrlList = JSON.parse(localStorage.getItem('socketUrlListL'))
       if (socketUrlList.length === 0) {

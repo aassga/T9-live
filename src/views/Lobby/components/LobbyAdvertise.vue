@@ -1,7 +1,7 @@
 <template>
   <div class="advertise">
     <div class="advertise__marquee">
-      <img src="./../../../../static/lobby/advertise/Speaker.png" alt="" />
+      <img :src="speakerSrc" alt="" />
     </div>
     <div class="advertise__swiper">
       <swiper
@@ -23,16 +23,17 @@
 <script>
 import { mapState } from "vuex";
 
-import { Swiper, SwiperSlide } from "vue-awesome-swiper";
-import "swiper/css/swiper.css";
+// import { Swiper, SwiperSlide } from "vue-awesome-swiper";
+// import "swiper/css/swiper.css";
 export default {
   name: "LobbyAdvertise",
-  components: {
-    Swiper,
-    SwiperSlide,
-  },
+  // components: {
+  //   Swiper,
+  //   SwiperSlide,
+  // },
   data() {
     return {
+      speakerSrc:require("./../../../assets/static/lobby/advertise/Speaker.png"),
       swiperOption: {
         slidesPerView: 1,
         spaceBetween: 30,
@@ -67,7 +68,7 @@ export default {
   &__marquee {
     width: 100%;
     height: 30px;
-    background: url("./../../../../static/lobby/advertise/Announcement_BG.png")
+    background: url("./../../../assets/static/lobby/advertise/Announcement_BG.png")
       no-repeat;
     background-size: 100%;
     display: flex;

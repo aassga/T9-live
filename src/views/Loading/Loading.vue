@@ -2,11 +2,11 @@
   <div class="loading__page">
     <img
       v-show="loading"
-      :src="loadingSpin"
+      :src="loadingSpinSrc"
       alt=""
     />
     <div class="loading__page--bg" v-show="!loading">
-      <img :src="loadingGirl" alt="" />
+      <img :src="loadingGirlSrc" alt="" />
       <div class="loading__bar">
         <div class="loading__bar--ball"></div>
       </div>
@@ -21,8 +21,8 @@ export default {
   data() {
     return {
       loading: true,
-      loadingSpin: require("./../../../static/loading/LoadingIcon.gif"),
-      loadingGirl: require("./../../../static/loading/bg.jpg")
+      loadingSpinSrc: require("./../../assets/static/loading/LoadingIcon.gif"),
+      loadingGirlSrc: require("./../../assets/static/loading/bg.jpg")
     };
   },
   mounted() {
@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     goLoginRouter(){
-      this.$router.push({ path: "/login" });
+      this.$router.push({ path: "/Login" });
     },
     initLodingShow() {
       const token = localStorage.getItem("token");
@@ -88,7 +88,7 @@ export default {
     position: relative;
     width: 350px;
     height: 20px;
-    background: url('./../../../static/loading/LoadingLine.png') no-repeat;
+    background: url('./../../assets/static/loading/LoadingLine.png') no-repeat;
     background-size: contain;
     top: -12rem;
     &--ball{
@@ -96,7 +96,7 @@ export default {
       height: 20px;
       display: inline-block;
       position: absolute;
-      background: url('./../../../static/loading/LoadingPoint.png') no-repeat;
+      background: url('./../../assets/static/loading/LoadingPoint.png') no-repeat;
       background-size: cover;
       top: -5px;
       left: 51px;

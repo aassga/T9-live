@@ -14,14 +14,20 @@ import 'element-ui/lib/theme-chalk/index.css'
 import './styles.css'
 import './jquery.dialogbox.css'
 
+//輪播
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+import "swiper/css/swiper.css";
+Vue.use(VueAwesomeSwiper)
+
 //i18n
 import i18n from './common/plugins/vue-i18n'
 
 // 引入根组件mixins 日期格式
 import mixins from './mixins/root.js'
 
-import checkTime from './utils/checkTime.js'
-Vue.use(checkTime);
+// 監聽使用時間
+// import checkTime from './utils/checkTime.js'
+// Vue.use(checkTime);
 
 Vue.use(ElementUI);
 
