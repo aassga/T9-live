@@ -1,8 +1,5 @@
 <template>
   <div class="advertise">
-    <div class="advertise__marquee">
-      <img :src="speakerSrc" alt="" />
-    </div>
     <div class="advertise__swiper">
       <swiper
         class="swiper"
@@ -10,10 +7,8 @@
         @slideChange="onSlideChange"
         ref="mySwiper"
       >
-        <swiper-slide v-for="(item,index) in bannerList" :key="index"
-          ><img
-            :src="item.ImgPath"
-            alt=""
+        <swiper-slide v-for="(item, index) in bannerList" :key="index"
+          ><img :src="item.ImgPath" alt=""
         /></swiper-slide>
       </swiper>
     </div>
@@ -23,17 +18,11 @@
 <script>
 import { mapState } from "vuex";
 
-// import { Swiper, SwiperSlide } from "vue-awesome-swiper";
-// import "swiper/css/swiper.css";
 export default {
   name: "LobbyAdvertise",
-  // components: {
-  //   Swiper,
-  //   SwiperSlide,
-  // },
   data() {
     return {
-      speakerSrc:require("./../../../assets/static/lobby/advertise/Speaker.png"),
+      speakerSrc: require("./../../../assets/static/lobby/advertise/Speaker.png"),
       swiperOption: {
         slidesPerView: 1,
         spaceBetween: 30,
@@ -51,33 +40,16 @@ export default {
   },
   computed: {
     ...mapState({
-      bannerList: state => state.ws.bannerList,
+      bannerList: (state) => state.ws.bannerList,
     }),
   },
   methods: {
-    onSlideChange() {
-  
-    },
+    onSlideChange() {},
   },
 };
 </script>
 <style lang="scss" scoped>
 .advertise {
-  width: 95%;
-  padding: 0 5px;
-  &__marquee {
-    width: 100%;
-    height: 30px;
-    background: url("./../../../assets/static/lobby/advertise/Announcement_BG.png")
-      no-repeat;
-    background-size: 100%;
-    display: flex;
-    align-items: center;
-    img {
-      height: 15px;
-      padding-left: 10px;
-    }
-  }
   &__swiper {
     margin-top: 5px;
     .swiper {

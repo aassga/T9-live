@@ -1,8 +1,9 @@
 <template>
-  <div>
-    <LobbyRoad />
+  <div style="overflow: hidden;">
+    <lobby-advertise />
+    <lobby-road />
     <div class="lobby__category">
-      <LobbyCategory />
+      <lobby-category />
     </div>
   </div>
 </template>
@@ -10,11 +11,13 @@
 <script>
 import LobbyRoad from "./components/LobbyRoad.vue";
 import LobbyCategory from "./components/LobbyCategory.vue";
+import LobbyAdvertise from "./components/LobbyAdvertise.vue";
 export default {
   name: "LobbyRoom",
   components: {
     LobbyRoad,
     LobbyCategory,
+    LobbyAdvertise,
   },
 };
 </script>

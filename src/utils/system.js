@@ -1,7 +1,7 @@
 
 import Socket from "@/utils/socket";
 
-export function logout() {
+export function onLogout() {
   const removeConfig = ["token","account","password","socketUrlListL","vuex-along" ]
   removeConfig.forEach((item) =>{
     localStorage.removeItem(item)

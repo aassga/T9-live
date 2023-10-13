@@ -6,7 +6,7 @@
           <div
             id="Lang"
             class="ts-select is-active is-bottom"
-            @click="langBtn = !langBtn"
+            @click="isLangBtn = !isLangBtn"
           >
             <div class="content">
               <span
@@ -18,10 +18,10 @@
             <div
               id="SelectLangPanel"
               class="ts-dropdown is-scrollable is-bottom"
-              v-show="langBtn"
+              v-show="isLangBtn"
             >
               <button
-                v-for="(item, index) in langSelect"
+                v-for="(item, index) in langSelectList"
                 :key="index"
                 id="SelectLangItem"
                 class="item"
@@ -37,12 +37,7 @@
             </div>
           </div>
           <br />
-          <img
-            class="site__logo Logo"
-            width="80"
-            height="76"
-            :src="logoSrc"
-          />
+          <img class="site__logo Logo" width="80" height="76" :src="logoSrc" />
           <img
             class="site__title Logo"
             width="282"
@@ -74,7 +69,7 @@
               />
             </div>
             <div class="status_field">
-              <span v-show="statusField">{{ onSubmitMsgShow }}</span>
+              <span v-show="isStatusField">{{ statusFieldText }}</span>
             </div>
             <div class="form__field" @click="validate()">
               <div class="onSubmit">{{ $t("Login") }}</div>
@@ -142,11 +137,11 @@
           </form>
         </div>
       </div>
-      <div class="mask__block" v-show="maskShow"></div>
+      <div class="mask__block" v-show="isMaskShow"></div>
       <section
         id="dialog"
         class="dialog-box effect-fade dialog-style"
-        :class="{ show: showErrorMsg }"
+        :class="{ show: isErrorMsgshow }"
         :style="dialogMarginStyle()"
       >
         <div class="dialog-box-container normal">
@@ -158,24 +153,26 @@
 </template>
 <script>
 import { login } from "@/api/index";
+import { onLogout } from "@/utils/system";
+
 import { mapMutations } from "vuex";
 export default {
   name: "Login",
   data() {
     return {
-      langBtn: false,
-      maskShow: false,
-      statusField: false,
-      showErrorMsg: false,
-      logoSrc:require("./../../assets/static/Icon.png"),
-      logoText:require("./../../assets/static/TitleText.png"),
+      isLangBtn: false,
+      isMaskShow: false,
+      isStatusField: false,
+      isErrorMsgshow: false,
+      logoSrc: require("./../../assets/static/Icon.png"),
+      logoText: require("./../../assets/static/TitleText.png"),
       loginForm: {
         account: "",
         password: "",
         language: "CN",
       },
       imgSelectKey: "cn",
-      langSelect: [
+      langSelectList: [
         {
           key: "CN",
           lang: "简体中文",
@@ -202,8 +199,11 @@ export default {
           imgKey: "th",
         },
       ],
-      onSubmitMsgShow: "",
+      statusFieldText: "",
     };
+  },
+  created() {
+    
   },
   mounted() {
     this.initLang();
@@ -249,28 +249,28 @@ export default {
       this.imgSelectKey = langList[lang];
       this.loginForm.language = lang;
     },
-    clickLangBtn(data) {
-      this.loginForm.language = data;
-      this.setActiveLanguage(data);
-      return history.go(0);
+    clickLangBtn(lang) {
+      this.loginForm.language = lang;
+      this.setActiveLanguage(lang);
+      return window.location.reload()
     },
     setActiveLanguage(lang) {
       localStorage.setItem("language", lang);
     },
     validate() {
       if (!this.loginForm.account) {
-        this.onSubmitMsgShow = this.$t("Msg_EnterAcc");
+        this.statusFieldText = this.$t("Msg_EnterAcc");
         return;
       } else if (!this.loginForm.password) {
-        this.onSubmitMsgShow = this.$t("Msg_EnterPwd");
+        this.statusFieldText = this.$t("Msg_EnterPwd");
         return;
       } else {
-        this.onSubmitMsgShow = this.$t("ConnectServer_0");
-        this.getLogin(); 
+        this.statusFieldText = this.$t("ConnectServer_0");
+        this.onLogin();
       }
     },
-    getLogin() {
-      this.statusField = true;
+    onLogin() {
+      this.isStatusField = true;
       const device = localStorage.getItem("device");
       let parmas = {
         Account: this.loginForm.account,
@@ -280,40 +280,46 @@ export default {
         SerialNumber: localStorage.getItem("serialNumber"),
       };
       login(parmas).then((res) => {
-        if (res.Error === 0) {
+        if (res.ErrorCode === "Success") {
           this.checkRemember();
-          this.setStore(res)
+          this.setStore(res);
           this.setLocalStorage(res);
         } else if (res.ErrorCode === "MemberNotFound") {
-          this.maskShow = true;
-          this.showErrorMsg = true;
-          this.statusField = false;
+          this.isMaskShow = true;
+          this.isErrorMsgshow = true;
+          this.isStatusField = false;
           setTimeout(() => {
-            this.maskShow = false;
-            this.showErrorMsg = false;
+            this.isMaskShow = false;
+            this.isErrorMsgshow = false;
           }, 1500);
+        } else if(res.ErrorCode === "TokenFailed"){
+          onLogout()
         }
-      });
+      }).catch((err) => {
+        onLogout()
+        return false;
+      })
     },
-    checkRemember() {
+    checkRemember() { 
+      const today = this.$root.formatTime(new Date());
       const GamePrecautionsNumber = "GamePrecautions_" + this.loginForm.account;
-      const remember = localStorage.getItem(GamePrecautionsNumber);
-      const goRouter = remember ? "/Lobby" : "/MemberRule"
+      const rememberDay = localStorage.getItem(GamePrecautionsNumber);
+      const goRouter = today === rememberDay ? "/Lobby" : "/MemberRule";
       this.$router.push({ path: goRouter });
     },
-    setStore(res){
-      this.SET_GAME_LIST(res.Data.GameList)
-      this.SET_BANNER_LIST(res.Data.BannerList)
+    setStore(res) {
+      this.SET_GAME_LIST(res.Data.GameList);
+      this.SET_BANNER_LIST(res.Data.BannerList);
       this.SET_TABLE_LIST(res.Data.GameList[0].TableList);
     },
     setLocalStorage(res) {
       const infoConfig = {
-        "token":res.Data.Token,
-        "account" : this.loginForm.account,
-        "password" : this.loginForm.password,
-        "gameRuleRouter" : res.Data.MemberRuleUrl,
-        "socketUrlListL" : JSON.stringify(res.Data.ConnectIds),
-      }
+        token: res.Data.Token,
+        account: this.loginForm.account,
+        password: this.loginForm.password,
+        gameRuleRouter: res.Data.MemberRuleUrl,
+        socketUrlListL: JSON.stringify(res.Data.ConnectIds),
+      };
       for (let item in infoConfig) {
         localStorage.setItem(item, infoConfig[item]);
       }

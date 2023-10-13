@@ -1,5 +1,6 @@
 
 import { login } from "@/api/index";
+import { onLogout } from "@/utils/system";
 
 export function getSocketUrl() {
   const socketUrlList = JSON.parse(localStorage.getItem('socketUrlListL'))
@@ -17,9 +18,14 @@ export function getSocketList() {
     Token:token,
   };
   login(parmas).then((res) => {
-    if(res.Error === 0){
+    if(res.ErrorCode === "Success"){
       const socktList = res.Data.ConnectIds
       localStorage.setItem('socketUrlListL',JSON.stringify(socktList))
+    } else if(res.ErrorCode === "TokenFailed"){
+      onLogout()
     }
-  });
+  }).catch((err) => {
+    onLogout()
+    return false;
+  })
 }

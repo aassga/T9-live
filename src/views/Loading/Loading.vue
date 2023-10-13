@@ -1,11 +1,7 @@
 <template>
   <div class="loading__page">
-    <img
-      v-show="loading"
-      :src="loadingSpinSrc"
-      alt=""
-    />
-    <div class="loading__page--bg" v-show="!loading">
+    <img v-show="isLoading" :src="loadingSpinSrc" alt="" />
+    <div class="loading__page--bg" v-show="!isLoading">
       <img :src="loadingGirlSrc" alt="" />
       <div class="loading__bar">
         <div class="loading__bar--ball"></div>
@@ -16,51 +12,59 @@
 
 <script>
 import { login } from "@/api/index";
+import { onLogout } from "@/utils/system";
+
 export default {
-  name: 'Loading',
+  name: "Loading",
   data() {
     return {
-      loading: true,
+      isLoading: true,
       loadingSpinSrc: require("./../../assets/static/loading/LoadingIcon.gif"),
-      loadingGirlSrc: require("./../../assets/static/loading/bg.jpg")
+      loadingGirlSrc: require("./../../assets/static/loading/bg.jpg"),
     };
   },
-  mounted() {
+  created() {
     this.initLodingShow();
   },
   methods: {
-    goLoginRouter(){
+    goLoginRouter() {
       this.$router.push({ path: "/Login" });
     },
     initLodingShow() {
       const token = localStorage.getItem("token");
       setTimeout(() => {
-        this.loading = false;
+        this.isLoading = false;
         setTimeout(() => {
           if (token) {
-            this.getLogin()
+            this.onLogin();
           } else {
-            this.goLoginRouter()
+            this.goLoginRouter();
           }
         }, 1000);
       }, 1000);
     },
-    getLogin() {
+    onLogin() {
       const device = localStorage.getItem("device");
       const token = localStorage.getItem("token");
       let parmas = {
-        Device: device === "mobile" ? '1' : '0',
-        Token:token,
+        Device: device === "mobile" ? "1" : "0",
+        Token: token,
       };
       login(parmas).then((res) => {
-        if(res.Error === 0){
-          const token = res.Data.Token
-          localStorage.setItem('token',token)
+        if (res.ErrorCode === "Success") {
+          const token = res.Data.Token;
+          localStorage.setItem("token", token);
           this.$router.push({ path: "/MemberRule" });
-        }else{
-          this.goLoginRouter()
-        }
-      });
+        } else if(res.ErrorCode === "TokenFailed"){
+          onLogout()
+        } else {
+          this.goLoginRouter();
+        } 
+      }).catch((err) => {
+        console.log(err)
+        onLogout()
+        return false;
+      })
     },
   },
 };
@@ -83,32 +87,36 @@ export default {
       }
     }
   }
-  &__bar{
+  &__bar {
     display: inline-block;
     position: relative;
     width: 350px;
     height: 20px;
-    background: url('./../../assets/static/loading/LoadingLine.png') no-repeat;
+    background: url("./../../assets/static/loading/LoadingLine.png") no-repeat;
     background-size: contain;
     top: -12rem;
-    &--ball{
+    &--ball {
       width: 20px;
       height: 20px;
       display: inline-block;
       position: absolute;
-      background: url('./../../assets/static/loading/LoadingPoint.png') no-repeat;
+      background: url("./../../assets/static/loading/LoadingPoint.png")
+        no-repeat;
       background-size: cover;
       top: -5px;
       left: 51px;
       animation-name: animation; /*動畫名稱(自訂)*/
       animation-duration: 2s; /*一次完整動畫時間為4秒*/
       animation-iteration-count: infinite; /*播放次數為無限次*/
-
     }
   }
 }
 @keyframes animation {
-  0%   {left: 50px;}
-  100% {left: 300px;}
+  0% {
+    left: 50px;
+  }
+  100% {
+    left: 300px;
+  }
 }
 </style>

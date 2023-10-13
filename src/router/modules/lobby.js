@@ -11,6 +11,11 @@ const lobbyRouter = [
         name: "/Lobby/LobbyHome",
         component: () => import(/* webpackChunkName: "LobbyRoom" */ '@/views/Lobby/LobbyRoom.vue'),
       },
+      {
+        path: "/Lobby/LobbyGameList",
+        name: "/Lobby/LobbyGameList",
+        component: () => import(/* webpackChunkName: "LobbyRoom" */ '@/views/Lobby/LobbyGameList.vue'),
+      },
     ]
   },
 ]

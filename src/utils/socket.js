@@ -1,9 +1,9 @@
 import Vue from "vue";
-import { getSocketUrl, getSocketList } from "@/utils/socketUrl";
+import { getSocketUrl, getSocketList } from "@/utils/socketEvent";
 
 var socket = null;
 var isManualClose = false; // 手动关闭 WS 连线
-
+var retryCount = 0; // 记录 retry 次数
 const emitter = new Vue({
   methods: {
     sendWebSocket(message) {
@@ -24,9 +24,10 @@ const emitter = new Vue({
       socket.onclose = (e) => this.socketOnclose(e);
     },
     socketOnopen() {
+      retryCount = 0;
       const gameList = JSON.parse(localStorage.getItem('vuex-along')).root.ws.gameList
       const playerInfo = JSON.parse(localStorage.getItem('vuex-along')).root.ws.playerInfo
-      const GetBroadCast = playerInfo.GetBroadCast ? '1':'0'
+      const GetBroadCast = playerInfo.GetBroadCast ? '1' : '0'
       let socketData = {
         OpCode: "LoginGame",
         Data: {
@@ -49,7 +50,9 @@ const emitter = new Vue({
     },
     socketOnclose(e) {
       if (isManualClose) return
-      console.log("<--【连线斷開】------自動重新連線-->",e);
+      if (retryCount > 5) return
+      retryCount++;
+      console.log("<--【连线斷開】------自動重新連線-->", e);
       const socketUrlList = JSON.parse(localStorage.getItem('socketUrlListL'))
       if (socketUrlList.length === 0) {
         getSocketList()
@@ -58,5 +61,4 @@ const emitter = new Vue({
     }
   }
 });
-// emitter.connect();
 export default emitter;

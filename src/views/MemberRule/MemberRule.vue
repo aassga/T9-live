@@ -20,19 +20,22 @@
       <label for="inputId"></label>
       <span class="checkbox__text">{{ $t("DoNotShowAgain") }}</span>
     </div>
-    <audio ref="audioClickPlayer" :src="audioClickPlayer" type="audio/mp3"></audio>
-
+    <audio
+      ref="audioClickPlayer"
+      :src="audioClickPlayer"
+      type="audio/mp3"
+    ></audio>
   </div>
 </template>
 <script>
-import screenfull from 'screenfull'
+import screenfull from "screenfull";
 export default {
   name: "MemberRule",
   data() {
     return {
       remember: "",
       gameRuleUrl: "",
-      audioClickPlayer:require("./../../assets/static/audio/ClickBtn.mp3"),
+      audioClickPlayer: require("./../../assets/static/audio/ClickBtn.mp3"),
     };
   },
   mounted() {
@@ -40,8 +43,8 @@ export default {
   },
   methods: {
     openFullScreen() {
-       // 如果不允许进入全屏，发出不允许提示
-       if (!screenfull.isEnabled) {
+      // 如果不允许进入全屏，发出不允许提示
+      if (!screenfull.isEnabled) {
         this.$message("您的浏览器不能全屏");
         return false;
       }

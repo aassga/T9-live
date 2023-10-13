@@ -6,9 +6,10 @@
         :key="index"
         class="category__bg"
         :class="item.key"
+        @click="goGameList(item)"
       >
         <div class="category__bg--box">
-          <span>{{ item.name }}</span> 
+          <span>{{ item.name }}</span>
         </div>
       </div>
     </div>
@@ -18,9 +19,10 @@
         :key="index"
         class="category__bg"
         :class="item.key"
+        @click="goGameList(item)"
       >
         <div class="category__bg--box">
-          <span>{{ item.name }}</span> 
+          <span>{{ item.name }}</span>
         </div>
       </div>
     </div>
@@ -30,7 +32,6 @@
 <script>
 export default {
   name: "LobbyCategory",
-
   data() {
     return {
       gameCategoryTop: [
@@ -56,7 +57,11 @@ export default {
     };
   },
 
-  methods: {},
+  methods: {
+    goGameList(item) {
+      this.$router.push({ path: "/Lobby/LobbyGameList", query:{category:item.key} });
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -76,7 +81,7 @@ export default {
       position: relative;
       top: 55px;
     }
-    &--box{
+    &--box {
       width: 54%;
       height: 100%;
       text-align: center;
@@ -85,21 +90,22 @@ export default {
   .ClassicBaccarat {
     background: url("./../../../assets/static/lobby/category/ClassicBaccarat.png")
       no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
   }
   .MultiTable {
     background: url("./../../../assets/static/lobby/category/MultiTableBetting.png")
       no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
   }
   .Blackjack {
     background: url("./../../../assets/static/lobby/category/Blackjack.png")
       no-repeat;
-    background-size: 100%;
+    background-size: 100% 100%;
   }
   .NiuNiu {
-    background: url("./../../../assets/static/lobby/category/NiuNiu.png") no-repeat;
-    background-size: 100%;
+    background: url("./../../../assets/static/lobby/category/NiuNiu.png")
+      no-repeat;
+    background-size: 100% 100%;
   }
 }
 </style>

@@ -110,7 +110,6 @@ function GetSerialNumber() {
 
 function GetDivElement(elementID) {
   var p = document.getElementById(elementID);
-
   if (!p) {
     p = document.createElement("div");
     p.id = elementID;

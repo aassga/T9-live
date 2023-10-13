@@ -3,7 +3,7 @@
     <div class="lobby__header--left">
       <div class="message__box">
         <div class="message__box--content">
-          <span>{{memberInfo.name}}</span>
+          <span>{{ memberInfo.name }}</span>
         </div>
         <div class="message__box--edit"></div>
       </div>
@@ -12,7 +12,7 @@
           <div class="money">
             <img :src="momeySrc" alt="" />
           </div>
-          <span class="yellow">${{memberInfo.momey}}</span>
+          <span class="yellow">${{ memberInfo.momey }}</span>
         </div>
         <div class="message__box--loading" @click="loading()"></div>
       </div>
@@ -23,21 +23,33 @@
           v-for="(item, index) in icon"
           :key="index"
           class="message__icon--img"
-          :class="[{ 'display__none': volumeStyle(item.key) },item.key]"
+          :class="[{ display__none: volumeStyle(item.key) }, item.key]"
           @click="checkIcon(item)"
         >
-          <img :src="item.img" alt=""/>
+          <img :src="item.img" alt="" />
         </div>
       </div>
       <div class="message__box">
         <div class="message__box--content--money">
           <div class="message__box--redlimit"></div>
-          <span class="yellow">${{memberInfo.startMoney}} - ${{memberInfo.endMoney}}</span>
+          <span class="yellow"
+            >${{ memberInfo.startMoney }} - ${{ memberInfo.endMoney }}</span
+          >
         </div>
       </div>
     </div>
-    <audio ref="audioPlayer" :src="audioPlayer" type="audio/mp3" loop="ture"></audio>
-    <audio ref="audioClickPlayer" :src="audioClickPlayer" type="audio/mp3"></audio>
+
+    <audio
+      ref="audioPlayer"
+      :src="audioPlayer"
+      type="audio/mp3"
+      loop="ture"
+    ></audio>
+    <audio
+      ref="audioClickPlayer"
+      :src="audioClickPlayer"
+      type="audio/mp3"
+    ></audio>
   </div>
 </template>
 
@@ -47,9 +59,10 @@ export default {
   name: "LobbyHeader",
   data() {
     return {
-      momeySrc:require("./../../../assets/static/lobby/header/Money.png"),
-      audioPlayer:require("./../../../assets/static/audio/BGM.mp3"),
-      audioClickPlayer:require("./../../../assets/static/audio/ClickBtn.mp3"),
+      momeySrc: require("./../../../assets/static/lobby/header/Money.png"),
+      speakerSrc: require("./../../../assets/static/lobby/advertise/Speaker.png"),
+      audioPlayer: require("./../../../assets/static/audio/BGM.mp3"),
+      audioClickPlayer: require("./../../../assets/static/audio/ClickBtn.mp3"),
       icon: [
         {
           key: "mainMenu",
@@ -72,71 +85,70 @@ export default {
           img: require("./../../../assets/static/lobby/header/SignOut.png"),
         },
       ],
-      memberInfo:{
-        name:'',
-        momey:'',
-        startMoney:'',
-        endMoney:''
+      memberInfo: {
+        name: "",
+        momey: "",
+        startMoney: "",
+        endMoney: "",
       },
-      volume: false,
+      isVolume: false,
     };
   },
   computed: {
     ...mapState({
-      playerInfo: state => state.ws.playerInfo
+      playerInfo: (state) => state.ws.playerInfo,
     }),
   },
   watch: {
     playerInfo(val) {
-      this.initInfo()
-    }
+      this.initInfo();
+    },
   },
   created() {
-    this.initInfo()
+    this.initInfo();
   },
   methods: {
-    initInfo(){
-      const playerInfo = this.playerInfo
-      this.memberInfo.name = playerInfo.NickName
-      this.memberInfo.momey = this.formatPrice(playerInfo.Balance)
-      this.memberInfo.startMoney = this.formatPrice(playerInfo.MiniBetLimit)
-      this.memberInfo.endMoney = this.formatPrice(playerInfo.MaxBetLimit)
+    initInfo() {
+      const playerInfo = this.playerInfo;
+      this.memberInfo.name = playerInfo.NickName;
+      this.memberInfo.momey = this.formatPrice(playerInfo.Balance);
+      this.memberInfo.startMoney = this.formatPrice(playerInfo.MiniBetLimit);
+      this.memberInfo.endMoney = this.formatPrice(playerInfo.MaxBetLimit);
     },
     volumeStyle(data) {
       if (["volumeOn", "volumeOff"].includes(data)) {
-        return data === "volumeOff" ? this.volume : !this.volume;
+        return data === "volumeOff" ? this.isVolume : !this.isVolume;
       }
     },
     checkIcon(icon) {
-      const key = icon.key
+      const key = icon.key;
       switch (key) {
         case "mainMenu":
-          
           break;
         case "home":
           this.$router.push({ path: "/Lobby" });
           break;
         case "volumeOn":
-          this.volume = false
+          this.isVolume = false;
           this.$refs.audioPlayer.pause();
           break;
         case "volumeOff":
-          this.volume = true
+          this.isVolume = true;
           this.$refs.audioPlayer.play();
-          break;  
+          break;
         case "signOut":
-          this.$emit('logout')
-          break;    
+          this.$emit("logout");
+          break;
       }
-      this.volumeStyle(icon.key)
+      this.volumeStyle(icon.key);
       this.$refs.audioClickPlayer.play();
     },
-    loading(){
+    loading() {
       this.$refs.audioClickPlayer.play();
     },
-    formatPrice(price){
-      return String(price).replace(/\B(?=(\d{3})+(?!\d))/g,',')
-    }
+    formatPrice(price) {
+      return String(price).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    },
   },
 };
 </script>
@@ -156,10 +168,23 @@ export default {
     padding: 15px 0 0 0;
     display: flex;
     justify-content: space-around;
-    &--left,&--right {
+    &--left,
+    &--right {
       width: 48%;
     }
-
+    &--marquee {
+    width: 100%;
+    height: 30px;
+    background: url("./../../../assets/static/lobby/advertise/Announcement_BG.png")
+      no-repeat;
+    background-size: 100%;
+    display: flex;
+    align-items: center;
+    img {
+      height: 15px;
+      padding-left: 10px;
+    }
+  }
   }
   .message {
     &__icon {
@@ -173,14 +198,16 @@ export default {
         width: 30px;
         display: flex;
         align-items: center;
-        
       }
-      .mainMenu{
+      .mainMenu {
         img {
           height: 20px;
         }
       }
-      .home,.volumeOn,.volumeOff,.signOut{
+      .home,
+      .volumeOn,
+      .volumeOff,
+      .signOut {
         img {
           height: 25px;
         }
@@ -189,7 +216,8 @@ export default {
     &__box {
       width: 100%;
       height: 25px;
-      background: url("./../../../assets/static/lobby/header/FrameBG.png") no-repeat;
+      background: url("./../../../assets/static/lobby/header/FrameBG.png")
+        no-repeat;
       background-size: contain;
       margin-bottom: 5px;
       display: flex;
@@ -200,16 +228,17 @@ export default {
         font-size: 9px;
         display: flex;
         align-items: center;
-        &--money{
+        &--money {
           width: 100%;
           padding-left: 15px;
           display: flex;
-          align-items: center;   
+          align-items: center;
         }
         .money {
           width: 15px;
           height: 15px;
-          background: url("./../../../assets/static/lobby/header/MoneyBG.png") no-repeat;
+          background: url("./../../../assets/static/lobby/header/MoneyBG.png")
+            no-repeat;
           background-size: cover;
           display: flex;
           justify-content: center;
@@ -223,20 +252,23 @@ export default {
       &--redlimit {
         width: 13px;
         height: 10px;
-        background: url("./../../../assets/static/lobby/header/RedLimit.png") no-repeat;
+        background: url("./../../../assets/static/lobby/header/RedLimit.png")
+          no-repeat;
         background-size: cover;
         margin-right: 5px;
       }
       &--edit {
         width: 15px;
         height: 15px;
-        background: url("./../../../assets/static/lobby/header/Pen.png") no-repeat;
+        background: url("./../../../assets/static/lobby/header/Pen.png")
+          no-repeat;
         background-size: cover;
       }
       &--loading {
         width: 15px;
         height: 15px;
-        background: url("./../../../assets/static/lobby/header/Reset.png") no-repeat;
+        background: url("./../../../assets/static/lobby/header/Reset.png")
+          no-repeat;
         background-size: cover;
       }
     }

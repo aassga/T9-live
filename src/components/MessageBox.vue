@@ -1,7 +1,7 @@
 <template>
   <div class="msg__box">
     <div class="msg__box--bg">
-      <div class="msg__box--content">{{ msgText }}</div>
+      <div class="msg__box--content">{{ messageText }}</div>
       <div class="msg__box--bottom">
         <div class="submit" @click="onSubmit" v-if="okButtom">{{$t('OK')}}</div>
         <div class="cancel" @click="cancel" v-if="noButtom">{{$t('Cancel')}}</div>
@@ -15,7 +15,7 @@
 export default {
   name: "msgBox",
   props: {
-    msgText: {
+    messageText: {
       type: String,
     },
     okButtom:{

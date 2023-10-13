@@ -23,11 +23,11 @@ Vue.use(VueAwesomeSwiper)
 import i18n from './common/plugins/vue-i18n'
 
 // 引入根组件mixins 日期格式
-import mixins from './mixins/root.js'
+import mixins from './mixins/root'
 
 // 監聽使用時間
-// import checkTime from './utils/checkTime.js'
-// Vue.use(checkTime);
+// import checkUseTime from './utils/checkUseTime'
+// Vue.use(checkUseTime);
 
 Vue.use(ElementUI);
 
