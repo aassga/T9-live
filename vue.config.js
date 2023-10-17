@@ -15,7 +15,7 @@ module.exports = {
         ws: false,     // 如果要代理 websockets
         changOrigin: true,  // 允许跨域
       },
-    }
+    },
   },
   configureWebpack: {
     resolve: {

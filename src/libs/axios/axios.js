@@ -1,5 +1,5 @@
 import axios from 'axios'
-axios.defaults.headers.post['Content-Type'] = "'Content-Type': 'multipart/form-data'";
+axios.defaults.headers['Content-Type'] = "application/json; charset=UTF-8";
 axios.defaults.timeout = 100000
 // 前端axios添加withCredentials属性
 axios.defaults.withCredentials = true

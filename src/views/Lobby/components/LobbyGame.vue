@@ -57,11 +57,10 @@
         <div class="game__count">
           <div class="game__bottom--ball gray__Banker--Pair"></div>
           <span class="small__size">12</span>
-        </div>
-        
+        </div>  
       </div>
       <div class="game__bottom--right">
-        <div class="game__bottom--btn">
+        <div class="game__bottom--btn" @click="goInRoom()">
           <span class="small__size">{{ $t("JoinIn") }}</span>
         </div>
       </div>
@@ -120,6 +119,9 @@ export default {
           break
       }
     },
+    goInRoom(){
+      
+    }
   },
 };
 </script>

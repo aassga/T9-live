@@ -164,6 +164,7 @@ export default {
       isMaskShow: false,
       isStatusField: false,
       isErrorMsgshow: false,
+      isDisable:false,
       logoSrc: require("./../../assets/static/Icon.png"),
       logoText: require("./../../assets/static/TitleText.png"),
       loginForm: {
@@ -265,11 +266,13 @@ export default {
         this.statusFieldText = this.$t("Msg_EnterPwd");
         return;
       } else {
+        if(this.isDisable) return
         this.statusFieldText = this.$t("ConnectServer_0");
         this.onLogin();
       }
     },
     onLogin() {
+      this.isDisable = true
       this.isStatusField = true;
       const device = localStorage.getItem("device");
       let parmas = {
@@ -298,6 +301,8 @@ export default {
       }).catch((err) => {
         onLogout()
         return false;
+      }).finally(() => {
+        this.isDisable = false
       })
     },
     checkRemember() { 
@@ -319,6 +324,8 @@ export default {
         password: this.loginForm.password,
         gameRuleRouter: res.Data.MemberRuleUrl,
         socketUrlListL: JSON.stringify(res.Data.ConnectIds),
+        agentId:res.Data.AgentId,
+        gameType:res.Data.GameList[0].GameType
       };
       for (let item in infoConfig) {
         localStorage.setItem(item, infoConfig[item]);

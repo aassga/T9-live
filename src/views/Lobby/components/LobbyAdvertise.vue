@@ -1,16 +1,20 @@
 <template>
   <div class="advertise">
     <div class="advertise__swiper">
-      <swiper
-        class="swiper"
-        :options="swiperOption"
-        @slideChange="onSlideChange"
-        ref="mySwiper"
-      >
+      <swiper class="swiper" :options="swiperOption" ref="mySwiper">
         <swiper-slide v-for="(item, index) in bannerList" :key="index"
-          ><img :src="item.ImgPath" alt=""
+          ><img :src="item.ImgPath" alt="" @click="goBannerDetail(item)"
         /></swiper-slide>
       </swiper>
+    </div>
+    <div class="advertise__customer" v-show="isCustomerShow">
+      <IframePage
+        :gameRuleUrl="gameRuleUrl"
+        :isShowRemember="isShowRemember"
+        :iframeDivId="iframeDivId"
+        :iframeId="iframeId"
+        @close="closeIframe()"
+      />
     </div>
   </div>
 </template>
@@ -18,10 +22,17 @@
 <script>
 import { mapState } from "vuex";
 
+import IframePage from "@/components/IframePage.vue";
+
 export default {
   name: "LobbyAdvertise",
   data() {
     return {
+      gameRuleUrl: "",
+      iframeDivId: "BannerDiv",
+      iframeId: "BannerIframe",
+      isShowRemember: false,
+      isCustomerShow:false,
       speakerSrc: require("./../../../assets/static/lobby/advertise/Speaker.png"),
       swiperOption: {
         slidesPerView: 1,
@@ -43,8 +54,17 @@ export default {
       bannerList: (state) => state.ws.bannerList,
     }),
   },
+  components: {
+    IframePage,
+  },
   methods: {
-    onSlideChange() {},
+    goBannerDetail(item) {
+      this.isCustomerShow = true
+      this.gameRuleUrl = `${process.env.VUE_APP_URL}${item.ActPath}`;
+    },
+    closeIframe(){
+      this.isCustomerShow = false
+    },
   },
 };
 </script>
@@ -59,6 +79,15 @@ export default {
         }
       }
     }
+  }
+  &__customer {
+    max-width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 2;
   }
 }
 </style>

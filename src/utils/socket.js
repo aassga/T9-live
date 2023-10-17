@@ -25,15 +25,14 @@ const emitter = new Vue({
     },
     socketOnopen() {
       retryCount = 0;
-      const gameList = JSON.parse(localStorage.getItem('vuex-along')).root.ws.gameList
       const playerInfo = JSON.parse(localStorage.getItem('vuex-along')).root.ws.playerInfo
       const GetBroadCast = playerInfo.GetBroadCast ? '1' : '0'
       let socketData = {
         OpCode: "LoginGame",
         Data: {
-          AccountType: String(playerInfo.AccountType),
-          AgentId: String(playerInfo.AgentId),
-          GameType: String(gameList[0].GameType),
+          AccountType: '1',
+          AgentId: String(localStorage.getItem('agentId')),
+          GameType: String(localStorage.getItem('gameType')),
           GetBroadCast: GetBroadCast,
           MemberName: localStorage.getItem('account'),
           Password: localStorage.getItem('password'),

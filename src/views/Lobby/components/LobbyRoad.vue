@@ -91,7 +91,6 @@ export default {
       tableList: (state) => state.ws.tableList,
     }),
   },
-  mounted() {},
   methods: {
     goGameList(){
       this.$router.push({ path: "/Lobby/LobbyGameList" });

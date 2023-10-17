@@ -3,9 +3,15 @@
     <div class="lobby__header--left">
       <div class="message__box">
         <div class="message__box--content">
-          <span>{{ memberInfo.name }}</span>
+          <input
+            v-if="isEditName"
+            class="content__input"
+            type="text"
+            v-model="newName"
+          />
+          <span v-else>{{ memberInfo.name }}</span>
         </div>
-        <div class="message__box--edit"></div>
+        <div class="message__box--edit" @click="editName()"></div>
       </div>
       <div class="message__box">
         <div class="message__box--content">
@@ -14,7 +20,7 @@
           </div>
           <span class="yellow">${{ memberInfo.momey }}</span>
         </div>
-        <div class="message__box--loading" @click="loading()"></div>
+        <div class="message__box--reset" @click="resetPrice()"></div>
       </div>
     </div>
     <div class="lobby__header--right">
@@ -54,7 +60,11 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { memberInfo } from "@/api/system";
+import { mapState, mapMutations } from "vuex";
+
+import Socket from "@/utils/socket";
+
 export default {
   name: "LobbyHeader",
   data() {
@@ -85,6 +95,7 @@ export default {
           img: require("./../../../assets/static/lobby/header/SignOut.png"),
         },
       ],
+      newName: "",
       memberInfo: {
         name: "",
         momey: "",
@@ -92,28 +103,38 @@ export default {
         endMoney: "",
       },
       isVolume: false,
+      isEditName: false,
     };
   },
   computed: {
     ...mapState({
       playerInfo: (state) => state.ws.playerInfo,
+      gameList: (state) => state.ws.gameList,
     }),
   },
   watch: {
-    playerInfo(val) {
-      this.initInfo();
+    playerInfo: {
+      handler(newVal, oldVal) {
+        this.initInfo();
+      },
+      deep: true,
     },
   },
   created() {
     this.initInfo();
   },
   methods: {
+    ...mapMutations({
+      SET_PLAYER_INFO: "ws/SET_PLAYER_INFO",
+    }),
     initInfo() {
-      const playerInfo = this.playerInfo;
-      this.memberInfo.name = playerInfo.NickName;
-      this.memberInfo.momey = this.formatPrice(playerInfo.Balance);
-      this.memberInfo.startMoney = this.formatPrice(playerInfo.MiniBetLimit);
-      this.memberInfo.endMoney = this.formatPrice(playerInfo.MaxBetLimit);
+      this.newName = this.playerInfo.NickName
+      this.memberInfo.name = this.playerInfo.NickName;
+      this.memberInfo.momey = this.formatPrice(this.playerInfo.Balance);
+      this.memberInfo.startMoney = this.formatPrice(
+        this.playerInfo.MiniBetLimit
+      );
+      this.memberInfo.endMoney = this.formatPrice(this.playerInfo.MaxBetLimit);
     },
     volumeStyle(data) {
       if (["volumeOn", "volumeOff"].includes(data)) {
@@ -143,8 +164,47 @@ export default {
       this.volumeStyle(icon.key);
       this.$refs.audioClickPlayer.play();
     },
-    loading() {
+    resetPrice() {
       this.$refs.audioClickPlayer.play();
+      let newPlayerInfo = this.playerInfo;
+      const agentId = newPlayerInfo.AgentId;
+      const memberName = newPlayerInfo.MemberName;
+      const token = localStorage.getItem("token");
+      let parmas = {
+        AgentId: String(agentId),
+        MemberName: memberName,
+        Token: token,
+      };
+      memberInfo(parmas).then((res) => {
+        const newResData = res.Data;
+        for (let item in newPlayerInfo) {
+          for (let el in newResData) {
+            if (item === el) {
+              newPlayerInfo[item] = newResData[el];
+            }
+          }
+        }
+        this.SET_PLAYER_INFO(newPlayerInfo);
+      });
+    },
+    editName() {
+      this.isEditName = !this.isEditName;
+      if(this.isEditName) return
+
+      const GameType = this.gameList[0].GameType
+      const CustomizeChips = JSON.parse("[" + this.playerInfo.CustomizeChips + "]")
+      const token = localStorage.getItem("token");
+      let editData = {
+        OpCode: "UpdateMemberInfo",
+        Data: {
+          GameType: String(GameType),
+          NickName: this.newName,
+          CustomizeChips:CustomizeChips,
+        },
+        Token: token,
+      };
+      Socket.sendWebSocket(editData)
+      this.memberInfo.name = this.newName
     },
     formatPrice(price) {
       return String(price).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -173,18 +233,18 @@ export default {
       width: 48%;
     }
     &--marquee {
-    width: 100%;
-    height: 30px;
-    background: url("./../../../assets/static/lobby/advertise/Announcement_BG.png")
-      no-repeat;
-    background-size: 100%;
-    display: flex;
-    align-items: center;
-    img {
-      height: 15px;
-      padding-left: 10px;
+      width: 100%;
+      height: 30px;
+      background: url("./../../../assets/static/lobby/advertise/Announcement_BG.png")
+        no-repeat;
+      background-size: 100%;
+      display: flex;
+      align-items: center;
+      img {
+        height: 15px;
+        padding-left: 10px;
+      }
     }
-  }
   }
   .message {
     &__icon {
@@ -248,6 +308,13 @@ export default {
             height: 10px;
           }
         }
+        .content {
+          &__input {
+            background: #000;
+            color: #FFF;
+            margin-left: -2px;
+          }
+        }
       }
       &--redlimit {
         width: 13px;
@@ -264,7 +331,7 @@ export default {
           no-repeat;
         background-size: cover;
       }
-      &--loading {
+      &--reset {
         width: 15px;
         height: 15px;
         background: url("./../../../assets/static/lobby/header/Reset.png")
@@ -274,4 +341,5 @@ export default {
     }
   }
 }
+
 </style>

@@ -17,6 +17,6 @@ const lobbyRouter = [
         component: () => import(/* webpackChunkName: "LobbyRoom" */ '@/views/Lobby/LobbyGameList.vue'),
       },
     ]
-  },
+  }
 ]
 export default lobbyRouter

@@ -86,19 +86,16 @@ export default {
       SET_PLAYER_INFO: "ws/SET_PLAYER_INFO",
       SET_TABLE_LIST: "ws/SET_TABLE_LIST",
     }),
-    handleClick(e) {
-      console.log(e);
-    },
     initSocket() {
       const socketUrlList = JSON.parse(localStorage.getItem("socketUrlListL"));
+      let timer = 0
       if (socketUrlList.length === 0) {
         getSocketList();
-        setTimeout(() => {
-          Socket.initWebSocket();
-        }, 2000);
-      } else {
+        timer = 2000
+      } 
+      setTimeout(() => {
         Socket.initWebSocket();
-      }
+      }, timer);
     },
     handleGetMessage(msg) {
       // 一些全局的動作可以放在這裡
@@ -111,12 +108,11 @@ export default {
           this.SET_PLAYER_INFO(JSON.parse(msg).PlayerInfo);
           break;
         case "EnterTable":
-          const playerInfo = this.playerInfo;
           let balanceInfo = {
             OpCode: "BalanceInfo",
             Data: {
-              AgentId: String(playerInfo.AgentId),
-              MemberName: playerInfo.MemberName,
+              AgentId: String(this.playerInfo.AgentId),
+              MemberName: this.playerInfo.MemberName,
             },
             Token: localStorage.getItem("token"),
           };
@@ -141,6 +137,13 @@ export default {
           );
           this.SET_TABLE_LIST(newTable);
           break;
+        case "UpdateMemberInfo":
+          const newMemberInfo = JSON.parse(msg);
+          let newPlayerInfo = this.playerInfo
+          newPlayerInfo.NickName = newMemberInfo.NickName
+          newPlayerInfo.CustomizeChips = newMemberInfo.CustomizeChips.toString()
+          this.SET_PLAYER_INFO(newPlayerInfo);
+          break;  
       }
     },
     decideGameStatus() {
@@ -162,15 +165,15 @@ export default {
       }
     },
     systemDisconnected() {
-      const gameList = this.gameList;
       this.isSystemShow = true;
       this.isLogoutShow = false;
       this.isLobbyMaskShow = true;
       this.messageText = this.$t("Msg_Disconnected");
+      const GameType = this.gameList[0].GameType;
       let leaveTable = {
         OpCode: "LeaveTable",
         Data: {
-          GameType: String(gameList[0].GameType),
+          GameType: String(GameType),
         },
         Token: localStorage.getItem("token"),
       };

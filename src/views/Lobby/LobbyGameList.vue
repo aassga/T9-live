@@ -1,6 +1,7 @@
 <template>
   <div class="game__list">
     <lobby-game
+      v-show="!isGameListShow"
       v-for="(item, index) in tableList"
       :key="index"
       :game-list="item"
@@ -38,7 +39,7 @@ export default {
     showGameList() {
       const categoryList = ["Blackjack", "NiuNiu"];
       const category = this.$route.query.category;
-      this.isGameListShow = categoryList.some((name) => name === category);
+      this.isGameListShow = categoryList.includes(category);
     },
   },
 };
