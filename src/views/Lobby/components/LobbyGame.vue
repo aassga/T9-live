@@ -131,10 +131,6 @@ export default {
   font-size: 10px;
   margin-left: 10px;
 }
-.small__size {
-  transform: scale(0.8);
-}
-
 .game {
   width: 100%;
   height: 160px;

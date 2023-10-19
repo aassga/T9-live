@@ -6,26 +6,46 @@
           <img :src="fireSrc" alt="" />
           {{ $t("TopGames") }}
         </div>
-        <img class="road__header--more" :src="moreSrc" alt="" @click="goGameList()"/>
+        <img
+          class="road__header--more"
+          :src="moreSrc"
+          alt=""
+          @click="goGameList()"
+        />
       </div>
       <div class="road__content">
         <swiper class="swiper" :options="swiperOption" ref="mySwiper">
-          <swiper-slide
-            v-for="(item, index) in tableList.slice(0, 3)"
-            :key="index"
-          >
+          <swiper-slide v-for="(item, index) in newRoadData" :key="index">
             <div class="road__content--game">
-              <span class="yellow"
-                >{{ $t("__classicBaccarat") }}{{ item.TableId }}</span
-              >
+              <div class="yellow small__size">
+                {{ $t("__classicBaccarat") }}{{ item.TableId }}
+              </div>
               <div class="game__bg">
-                <div class="game__frame">
+                <div
+                  class="game__frame"
+                  v-for="(hor, horIndex) in item.roadMap"
+                  :key="horIndex"
+                >
                   <div
-                    v-for="index in 78"
-                    :key="index"
+                    v-for="(line, lineIndex) in tidyMapData(hor)"
+                    :key="lineIndex"
                     class="game__frame--box"
                   >
-                  <span style="visibility: hidden;">0</span>
+                    <div class="road__map--img" v-if="line">
+                      <template>
+                        <img
+                          v-for="index in 3"
+                          :key="index"
+                          v-show="iconShow(line, index)"
+                          :src="
+                            require(`./../../../assets/static/roadMap/P${
+                              index - 1
+                            }_BigRoad_${iconNumber(line, index)}.png`)
+                          "
+                          alt=""
+                        />
+                      </template>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -40,26 +60,46 @@
           <img :src="starSrc" alt="" />
           {{ $t("GoodRoad") }}
         </div>
-        <img class="road__header--more" :src="moreSrc" alt="" @click="goGameList()"/>
+        <img
+          class="road__header--more"
+          :src="moreSrc"
+          alt=""
+          @click="goGameList()"
+        />
       </div>
       <div class="road__content">
         <swiper class="swiper" :options="swiperOption" ref="mySwiper">
-          <swiper-slide
-            v-for="(item, index) in tableList.slice(3, 6)"
-            :key="index"
-          >
+          <swiper-slide v-for="(item, index) in isGoodRoadData" :key="index">
             <div class="road__content--game">
-              <span class="yellow"
-                >{{ $t("__classicBaccarat") }}{{ item.TableId }}</span
-              >
+              <div class="yellow small__size">
+                {{ $t("__classicBaccarat") }}{{ item.TableId }}
+              </div>
               <div class="game__bg">
-                <div class="game__frame">
+                <div
+                  class="game__frame"
+                  v-for="(hor, horIndex) in item.roadMap"
+                  :key="horIndex"
+                >
                   <div
-                    v-for="index in 78"
-                    :key="index"
+                    v-for="(line, lineIndex) in tidyMapData(hor)"
+                    :key="lineIndex"
                     class="game__frame--box"
                   >
-                    <span style="visibility: hidden;">0</span>
+                    <div class="road__map--img" v-if="line">
+                      <template>
+                        <img
+                          v-for="index in 3"
+                          :key="index"
+                          v-show="iconShow(line, index)"
+                          :src="
+                            require(`./../../../assets/static/roadMap/P${
+                              index - 1
+                            }_BigRoad_${iconNumber(line, index)}.png`)
+                          "
+                          alt=""
+                        />
+                      </template>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -72,6 +112,8 @@
 </template>
 
 <script>
+import { getRoadArray, GoodRoadRecommendedOrder } from "@/utils/roadMap";
+
 import { mapState } from "vuex";
 export default {
   name: "LobbyRoad",
@@ -80,10 +122,14 @@ export default {
       swiperOption: {
         slidesPerView: 3,
         spaceBetween: 0, //间距
+        wrapperClass: ["swiper-wrapper", "xs-wrapper"],
       },
       fireSrc: require("./../../../assets/static/lobby/room/Fire.png"),
       starSrc: require("./../../../assets/static/lobby/room/Star.png"),
       moreSrc: require("./../../../assets/static/lobby/room/More.png"),
+      newRoadData: [],
+      isGoodRoadData: [],
+      xsWapper: "",
     };
   },
   computed: {
@@ -91,8 +137,42 @@ export default {
       tableList: (state) => state.ws.tableList,
     }),
   },
+  created() {
+    this.initRoadMap();
+    this.isGoodRoad();
+  },
+  mounted() {},
   methods: {
-    goGameList(){
+    initRoadMap() {
+      let oldRoadData = this.tableList;
+      oldRoadData.forEach((element) => {
+        const stingData = element.SC.toString();
+        element.roadMap = getRoadArray(stingData);
+        element.isGoodRoad = GoodRoadRecommendedOrder(stingData);
+      });
+      this.newRoadData = oldRoadData.slice(0, 3);
+    },
+    isGoodRoad() {
+      let oldRoadData = this.tableList;
+      oldRoadData.reverse().sort((a, b) => {
+        return b.isGoodRoad - a.isGoodRoad;
+      });
+      this.isGoodRoadData = oldRoadData.slice(0, 3);
+    },
+    tidyMapData(data) {
+      const count = 13;
+      const limitData = data.slice(0, 13);
+      let oldData = new Array(count - limitData.length).fill("");
+      let newData = [...limitData, ...oldData];
+      return newData;
+    },
+    iconNumber(num, index) {
+      return num.split("_")[index - 1];
+    },
+    iconShow(num, index) {
+      return this.iconNumber(num, index) !== 0;
+    },   
+    goGameList() {
       this.$router.push({ path: "/Lobby/LobbyGameList" });
     },
   },
@@ -102,7 +182,9 @@ export default {
 .yellow {
   color: #ffd997;
   font-size: 10px;
-  margin-left: 10px;
+  padding: 2px 0;
+  position: relative;
+  left: -5px;
 }
 .room {
   &__road {
@@ -121,7 +203,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px 0;
+    padding: 6px 0;
     &--title {
       display: flex;
       margin: 0 auto;
@@ -140,39 +222,52 @@ export default {
   }
   &__content {
     width: 100%;
-    display: flex;
-    justify-content: center;
+    // display: flex;
+    // justify-content: center;
+
     &--game {
-      width: 95%;
-      height: 68px;
+      width: 98%;
+      height: 85px;
       background: url("./../../../assets/static/lobby/room/RoadMap_BG.png")
         no-repeat;
-      background-size: 100% 100%;
+      background-size: 100% 25%;
       margin: 0 1px;
       .game {
         &__bg {
           width: 100%;
-          height: 45px;
+          height: 72%;
           background: url("./../../../assets/static/lobby/room/Road_WBG.png")
             no-repeat;
           background-size: 100% 100%;
-          padding: 2px 3px 3px 4px;
+          padding: 1px;
         }
         &__frame {
           width: 100%;
-          height: 42px;
+          // height: 42px;
           background: url("./../../../assets/static/lobby/room/Mini_Frame.png")
             no-repeat;
           background-size: 100% 100%;
           &--box {
             border: 0.5px solid #b3b3b3;
+            background: #ffffff;
             float: left;
-            font-size: 10px;
             width: 7.6%;
-            height: 6.9px;
-            line-height: 6.9px;
+            height: 9.7px;
           }
         }
+      }
+    }
+  }
+  &__map {
+    &--img {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      img {
+        height: 10px;
+        position: absolute;
       }
     }
   }

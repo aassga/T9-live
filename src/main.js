@@ -26,8 +26,8 @@ import i18n from './common/plugins/vue-i18n'
 import mixins from './mixins/root'
 
 // 監聽使用時間
-// import checkUseTime from './utils/checkUseTime'
-// Vue.use(checkUseTime);
+// import './utils/checkUseTime'
+
 
 Vue.use(ElementUI);
 

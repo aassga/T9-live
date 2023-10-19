@@ -6,7 +6,7 @@ window.onload = function () {
   window.document.onmousedown = function () {
     lastTime = new Date().getTime();
   }
-};  
+};
 export function checkTimeout() {
   currentTime = new Date().getTime(); //更新当前时间
   if (currentTime - lastTime > timeOut) { //判断是否超时
@@ -15,7 +15,7 @@ export function checkTimeout() {
     var newUrl = url.match(/(\S*)#/)[1];
     window.open(newUrl + '#/Loading', '_self');
     lastTime = new Date().getTime();
-    console.log('重製',lastTime)
+    console.log('重製', lastTime)
   }
 }
 

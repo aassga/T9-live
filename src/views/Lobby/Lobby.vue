@@ -117,6 +117,7 @@ export default {
             Token: localStorage.getItem("token"),
           };
           Socket.sendWebSocket(balanceInfo);
+          this.SET_TABLE_LIST(JSON.parse(msg).TableList);
           break;
         case "DisConnected":
           const timeout = 3000;
