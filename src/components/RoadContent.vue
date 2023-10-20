@@ -13,24 +13,18 @@
               :key="horIndex"
             >
               <div
-                v-for="(line, lineIndex) in tidyMapData(hor)"
+                v-for="(item, lineIndex) in tidyMapData(hor)"
                 :key="lineIndex"
                 class="game__frame--box"
               >
-                <div class="road__map--img" v-if="line">
-                  <template>
-                    <img
-                      v-for="index in 3"
-                      :key="index"
-                      v-show="iconShow(line, index)"
-                      :src="
-                        require(`./../assets/static/roadMap/P${
-                          index - 1
-                        }_BigRoad_${iconNumber(line, index)}.png`)
-                      "
-                      alt=""
-                    />
-                  </template>
+                <div class="road__map--img" v-if="item">
+                  <img
+                    v-for="index in 3"
+                    v-show="iconShow(item, index)"
+                    :key="index"
+                    :src="drawIcon(item, index)"
+                    alt=""
+                  />
                 </div>
               </div>
             </div>
@@ -44,10 +38,10 @@
 <script>
 export default {
   name: "RoadContent",
-  props:{
-    data:{
-      type:Array
-    }
+  props: {
+    data: {
+      type: Array,
+    },
   },
   data() {
     return {
@@ -66,11 +60,16 @@ export default {
       let newData = [...limitData, ...oldData];
       return newData;
     },
-    iconNumber(num, index) {
-      return num.split("_")[index - 1];
+    drawIcon(item, index) {
+      const firstNumber = index - 1;
+      const endNumber = this.iconNumber(item, index);
+      return require(`./../assets/static/roadMap/P${firstNumber}_BigRoad_${endNumber}.png`);
     },
-    iconShow(num, index) {
-      return this.iconNumber(num, index) !== 0;
+    iconNumber(item, index) {
+      return item.split("_")[index - 1];
+    },
+    iconShow(item, index) {
+      return this.iconNumber(item, index) !== "0";
     },
   },
 };
@@ -92,8 +91,7 @@ export default {
     &--game {
       width: 98%;
       height: 85px;
-      background: url("./../assets/static/lobby/room/RoadMap_BG.png")
-        no-repeat;
+      background: url("./../assets/static/lobby/room/RoadMap_BG.png") no-repeat;
       background-size: 100% 25%;
       margin: 0 1px;
       .game {
@@ -107,10 +105,6 @@ export default {
         }
         &__frame {
           width: 100%;
-          // height: 42px;
-          background: url("./../assets/static/lobby/room/Mini_Frame.png")
-            no-repeat;
-          background-size: 100% 100%;
           &--box {
             border: 0.5px solid #b3b3b3;
             background: #ffffff;

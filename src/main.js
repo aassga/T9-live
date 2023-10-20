@@ -28,9 +28,12 @@ import mixins from './mixins/root'
 // 監聽使用時間
 // import './utils/checkUseTime'
 
+import _ from "lodash";
+
 
 Vue.use(ElementUI);
 
+Vue.prototype._ = _;//引入loadsh
 Vue.prototype.$md5 = md5;
 Vue.prototype.$moment = moment;
 Vue.config.productionTip = false

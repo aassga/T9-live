@@ -2,7 +2,7 @@
   <div class="lobby">
     <div class="lobby__box">
       <lobby-header @logout="logoutMaskShow" />
-      <div class="lobby__box--marquee">
+      <div class="lobby__marquee">
         <div class="marquee">
           <img :src="speakerSrc" alt="" />
           <div class="marquee__text">
@@ -10,7 +10,7 @@
           </div>
         </div>
       </div>
-      <div class="lobby__box--content">
+      <div class="lobby__content">
         <router-view></router-view>
       </div>
     </div>
@@ -39,8 +39,6 @@
 </template>
 
 <script>
-import _ from "lodash";
-
 import LobbyHeader from "./components/LobbyHeader.vue";
 import MessageBox from "@/components/MessageBox.vue";
 
@@ -135,13 +133,14 @@ export default {
           break;
         case "CloseTable":
           const tableId = JSON.parse(msg).TableId;
-          const newTable = _.cloneDeep(this.tableList);
+          const newTable = this._.cloneDeep(this.tableList);
           newTable.filter((id) => id.TableId !== tableId);
           this.SET_TABLE_LIST(newTable);
           break;
         case "UpdateMemberInfo":
           const newMemberInfo = JSON.parse(msg);
-          let newPlayerInfo = this.playerInfo;
+          let newPlayerInfo = this._.cloneDeep(this.playerInfo);
+          console.log(newPlayerInfo);
           newPlayerInfo.NickName = newMemberInfo.NickName;
           newPlayerInfo.CustomizeChips =
             newMemberInfo.CustomizeChips.toString();
@@ -226,39 +225,41 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    &--marquee {
-      width: 95%;
-      padding: 0 5px;
-      .marquee {
+
+    
+  }
+  &__marquee {
+    width: 95%;
+    padding: 0 5px;
+    .marquee {
+      width: 100%;
+      height: 30px;
+      background: url("./../../assets/static/lobby/advertise/Announcement_BG.png")
+        no-repeat;
+      background-size: 100%;
+      display: flex;
+      align-items: center;
+      img {
+        height: 15px;
+        padding-left: 10px;
+      }
+      &__text {
         width: 100%;
-        height: 30px;
-        background: url("./../../assets/static/lobby/advertise/Announcement_BG.png")
-          no-repeat;
-        background-size: 100%;
         display: flex;
         align-items: center;
-        img {
-          height: 15px;
-          padding-left: 10px;
-        }
-        &__text {
-          width: 100%;
-          display: flex;
-          align-items: center;
-          margin-left: 5px;
-        }
+        margin-left: 5px;
       }
     }
-    &--content {
+  }
+  &__content {
       width: 100%;
-      height: 560px;
+      height: 100%;
       background: url("./../../assets/static/lobby/room/BGMask.png") no-repeat;
       padding: 0 5px 5px 5px;
       margin-top: 5px;
       background-position-y: bottom;
       overflow: auto;
     }
-  }
   &__mask {
     width: 100%;
     height: 100%;

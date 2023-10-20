@@ -5,12 +5,22 @@
         >{{ $t("__classicBaccarat") }}{{ gameList.TableId }}</span
       >
       <div class="game__header--time small__size">
-        <lobby-time-count-down v-if="isCountDownShow" :gameTableId="gameList.TableId" :countDown="countDownTime" @handleTimer="handleTimer"/>
+        <time-count-down
+          v-if="isCountDownShow"
+          :gameTableId="gameList.TableId"
+          :countDown="countDownTime"
+          @handleTimer="handleTimer"
+        />
       </div>
     </div>
     <div class="game__content">
-      <div class="game__content--road">
+      <!-- <div class="game__content--road">
         <div v-for="index in 270" :key="index" class="road__frame--box"></div>
+      </div> -->
+      <div class="game__content--road">
+        <div class="game__frame" v-for="index in 6" :key="index">
+          <div class="game__frame--box" v-for="index in 22" :key="index"></div>
+        </div>
       </div>
       <div class="game__content--images">
         <img :src="gameList.DealerPhotoUrl" alt="" />
@@ -57,7 +67,7 @@
         <div class="game__count">
           <div class="game__bottom--ball gray__Banker--Pair"></div>
           <span class="small__size">12</span>
-        </div>  
+        </div>
       </div>
       <div class="game__bottom--right">
         <div class="game__bottom--btn" @click="goInRoom()">
@@ -69,7 +79,7 @@
 </template>
 
 <script>
-import LobbyTimeCountDown from "./LobbyTimeCountDown.vue";
+import TimeCountDown from "@/components/TimeCountDown.vue";
 
 import Socket from "@/utils/socket";
 export default {
@@ -81,17 +91,17 @@ export default {
   },
   data() {
     return {
-      countDownTime:0,
-      isCountDownShow:false
+      countDownTime: 0,
+      isCountDownShow: false,
     };
   },
-  watch:{
-    countDownTime(num){
-      this.isCountDownShow = num > 0
-    }
+  watch: {
+    countDownTime(num) {
+      this.isCountDownShow = num > 0;
+    },
   },
   components: {
-    LobbyTimeCountDown,
+    TimeCountDown,
   },
   created() {
     Socket.$on("message", this.handleGetMessage);
@@ -100,28 +110,26 @@ export default {
     Socket.$off("message", this.handleGetMessage);
   },
   methods: {
-    handleTimer(boolen,num){
-      this.isCountDownShow = boolen
-      this.countDownTime = num
+    handleTimer(boolen, num) {
+      this.isCountDownShow = boolen;
+      this.countDownTime = num;
     },
-    handleGetMessage(msg){
+    handleGetMessage(msg) {
       const msgType = JSON.parse(msg).OpCode;
       switch (msgType) {
         case "StartGame":
-          const gameTableId = this.gameList.TableId
-          const socketTableId = JSON.parse(msg).TableId
-          if(gameTableId === socketTableId){
+          const gameTableId = this.gameList.TableId;
+          const socketTableId = JSON.parse(msg).TableId;
+          if (gameTableId === socketTableId) {
             const startTime = new Date(JSON.parse(msg).StartTime);
             const endBetTime = new Date(JSON.parse(msg).EndBetTime);
-            const difference = endBetTime.getTime()- startTime.getTime();
-            this.countDownTime = difference / 1000
+            const difference = endBetTime.getTime() - startTime.getTime();
+            this.countDownTime = difference / 1000;
           }
-          break
+          break;
       }
     },
-    goInRoom(){
-      
-    }
+    goInRoom() {},
   },
 };
 </script>
@@ -154,9 +162,9 @@ export default {
     &--road {
       width: 75%;
       height: 100px;
-      background: url("./../../../assets/static/lobby/game/RoadMap_W.png")
-        no-repeat;
-      background-size: 98% 100%;
+      // background: url("./../../../assets/static/lobby/game/RoadMap_W.png")
+      //   no-repeat;
+      // background-size: 98% 100%;
       padding: 7px;
     }
     &--images {
@@ -333,6 +341,18 @@ export default {
     display: flex;
     align-items: center;
     margin-right: 3px;
+  }
+
+  &__frame {
+    width: 100%;
+
+    &--box {
+      border: 0.5px solid #b3b3b3;
+      background: #ffffff;
+      float: left;
+      width: 4.5%;
+      height: 9.7px;
+    }
   }
 }
 </style>

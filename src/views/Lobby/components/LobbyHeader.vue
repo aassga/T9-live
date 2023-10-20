@@ -60,10 +60,10 @@
 </template>
 
 <script>
+import Socket from "@/utils/socket";
+
 import { memberInfo } from "@/api/system";
 import { mapState, mapMutations } from "vuex";
-
-import Socket from "@/utils/socket";
 
 export default {
   name: "LobbyHeader",

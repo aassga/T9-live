@@ -1,6 +1,6 @@
 <template>
-  <div class="room__road">
-    <div class="room__road--bg">
+  <div class="game__road">
+    <div class="game__road--bg">
       <road-header
         :header-text="$t('TopGames')"
         :header-icon="fireSrc"
@@ -8,7 +8,7 @@
       />
       <road-content :data="newRoadData" />
     </div>
-    <div class="room__road--bg">
+    <div class="game__road--bg">
       <road-header
         :header-text="$t('GoodRoad')"
         :header-icon="starSrc"
@@ -20,11 +20,10 @@
 </template>
 
 <script>
-import _ from "lodash";
-import { getRoadArray, GoodRoadRecommendedOrder } from "@/utils/roadMap";
-
 import RoadHeader from "@/components/RoadHeader.vue";
 import RoadContent from "@/components/RoadContent.vue";
+
+import { getRoadArray, GoodRoadRecommendedOrder } from "@/utils/roadMap";
 import { mapState } from "vuex";
 
 export default {
@@ -63,7 +62,7 @@ export default {
   methods: {
     initRoadMap() {
       this.newRoadData = [];
-      this.newArray = _.cloneDeep(this.tableList); //cloneDeep深拷貝 防更改原本
+      this.newArray = this._.cloneDeep(this.tableList); //cloneDeep深拷貝 防更改原本
       this.newArray.forEach((element) => {
         const stingData = element.SC.toString();
         element.roadArray = getRoadArray(stingData);
@@ -85,7 +84,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.room {
+.game {
   &__road {
     &--bg {
       width: 100%;

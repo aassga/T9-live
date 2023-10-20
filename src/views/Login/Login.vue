@@ -139,6 +139,7 @@
       </div>
       <div class="mask__block" v-show="isMaskShow"></div>
       <section
+        v-if="isErrorMsgshow"
         id="dialog"
         class="dialog-box effect-fade dialog-style"
         :class="{ show: isErrorMsgshow }"
@@ -203,9 +204,6 @@ export default {
       statusFieldText: "",
     };
   },
-  created() {
-    
-  },
   mounted() {
     this.initLang();
     this.getLangImg();
@@ -217,8 +215,8 @@ export default {
   methods: {
     ...mapMutations({
       SET_GAME_LIST: "ws/SET_GAME_LIST",
-      SET_BANNER_LIST: "ws/SET_BANNER_LIST",
       SET_TABLE_LIST: "ws/SET_TABLE_LIST",
+      SET_BANNER_LIST: "ws/SET_BANNER_LIST",
     }),
     handleVisiable(e) {
       switch (e.target.visibilityState) {

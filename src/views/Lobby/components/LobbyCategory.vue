@@ -72,7 +72,7 @@ export default {
     justify-content: space-between;
   }
   &__bg {
-    width: 49%;
+    width: 49.5%;
     height: 100px;
     display: inline-block;
     margin-bottom: 3px;

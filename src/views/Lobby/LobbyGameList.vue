@@ -20,8 +20,8 @@ export default {
   name: "LobbyGameList",
   data() {
     return {
-      stayTunedSrc: require("./../../assets/static/lobby/StayTuned.png"),
       isGameListShow: false,
+      stayTunedSrc: require("./../../assets/static/lobby/StayTuned.png"),
     };
   },
   components: {
@@ -48,7 +48,7 @@ export default {
 .game {
   &__list {
     width: 100%;
-    height: 100%;
+    height: 560px;
   }
   &__no {
     width: 100%;

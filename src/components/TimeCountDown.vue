@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: "LobbyTimeCountDown",
+  name: "TimeCountDown",
   props: {
     countDown: {
       type: Number,

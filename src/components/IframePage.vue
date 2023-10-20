@@ -51,7 +51,6 @@ export default {
       type: Boolean,
     },
   },
-  mounted() {},
   methods: {
     openFullScreen() {
       // 如果不允许进入全屏，发出不允许提示
@@ -106,6 +105,7 @@ export default {
   height: 100%;
   z-index: 3;
   visibility: visible;
+  background-color: #252525;
 }
 
 .iframe {

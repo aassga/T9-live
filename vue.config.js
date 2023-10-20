@@ -3,6 +3,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 const IN_ONLINE = process.env.NODE_ENV === "online";
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 module.exports = {
   publicPath: '',
   devServer: {
@@ -18,6 +19,9 @@ module.exports = {
     },
   },
   configureWebpack: {
+    plugins:[
+      new BundleAnalyzerPlugin()
+    ],
     resolve: {
       alias: {
         '@': resolve('src'),
