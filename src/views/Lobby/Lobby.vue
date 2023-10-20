@@ -6,7 +6,7 @@
         <div class="marquee">
           <img :src="speakerSrc" alt="" />
           <div class="marquee__text">
-            <marquee>{{marqueeText}}</marquee>
+            <marquee>{{ marqueeText }}</marquee>
           </div>
         </div>
       </div>
@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import _ from "lodash";
+
 import LobbyHeader from "./components/LobbyHeader.vue";
 import MessageBox from "@/components/MessageBox.vue";
 
@@ -52,7 +54,7 @@ export default {
   data() {
     return {
       messageText: "",
-      marqueeText:"",
+      marqueeText: "",
       isLobbyMaskShow: true,
       isLobbyLoadingShow: true,
       isMessageBoxShow: false,
@@ -88,19 +90,19 @@ export default {
     }),
     initSocket() {
       const socketUrlList = JSON.parse(localStorage.getItem("socketUrlListL"));
-      let timer = 0
+      let timer = 0;
       if (socketUrlList.length === 0) {
         getSocketList();
-        timer = 2000
-      } 
+        timer = 2000;
+      }
       setTimeout(() => {
         Socket.initWebSocket();
       }, timer);
     },
     handleGetMessage(msg) {
       // 一些全局的動作可以放在這裡
-      const msgType = JSON.parse(msg).OpCode;
-      switch (msgType) {
+      const OpCode = JSON.parse(msg).OpCode;
+      switch (OpCode) {
         case "LoginGame":
           this.isLobbyLoadingShow = false;
           this.isLobbyMaskShow = false;
@@ -133,18 +135,27 @@ export default {
           break;
         case "CloseTable":
           const tableId = JSON.parse(msg).TableId;
-          const newTable = this.tableList.filter(
-            (id) => id.TableId !== tableId
-          );
+          const newTable = _.cloneDeep(this.tableList);
+          newTable.filter((id) => id.TableId !== tableId);
           this.SET_TABLE_LIST(newTable);
           break;
         case "UpdateMemberInfo":
           const newMemberInfo = JSON.parse(msg);
-          let newPlayerInfo = this.playerInfo
-          newPlayerInfo.NickName = newMemberInfo.NickName
-          newPlayerInfo.CustomizeChips = newMemberInfo.CustomizeChips.toString()
+          let newPlayerInfo = this.playerInfo;
+          newPlayerInfo.NickName = newMemberInfo.NickName;
+          newPlayerInfo.CustomizeChips =
+            newMemberInfo.CustomizeChips.toString();
           this.SET_PLAYER_INFO(newPlayerInfo);
-          break;  
+          break;
+        case "SyncSC":
+          const syncMsg = JSON.parse(msg);
+          this.tableList.forEach((res) => {
+            if (res.TableId === syncMsg.TableId) {
+              res.SC = syncMsg.SC;
+            }
+          });
+          this.SET_TABLE_LIST(this.tableList);
+          break;
       }
     },
     decideGameStatus() {
@@ -230,7 +241,7 @@ export default {
           height: 15px;
           padding-left: 10px;
         }
-        &__text{
+        &__text {
           width: 100%;
           display: flex;
           align-items: center;
@@ -242,8 +253,8 @@ export default {
       width: 100%;
       height: 560px;
       background: url("./../../assets/static/lobby/room/BGMask.png") no-repeat;
-      padding:0 5px 5px 5px;
-      margin-top:5px;
+      padding: 0 5px 5px 5px;
+      margin-top: 5px;
       background-position-y: bottom;
       overflow: auto;
     }
